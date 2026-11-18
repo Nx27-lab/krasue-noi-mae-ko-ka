@@ -1,0 +1,1834 @@
+<!doctype html>
+<html lang="th">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#211a35">
+  <title>กระสือน้อยผจญภัย · แม่ ก กา</title>
+  <style>:root {
+  font-family: Tahoma, system-ui, sans-serif;
+  color: #31243b;
+  background: #fff6e9;
+  color-scheme: light;
+  --plum: #281b3b;
+  --pink: #f166a2;
+  --gold: #ffce79;
+}
+* { box-sizing: border-box }
+html { scroll-behavior: smooth }
+body { margin: 0; min-width: 280px }
+body.in-game { overflow: hidden; background: #120e1d }
+button, a { -webkit-tap-highlight-color: transparent }
+button { font: inherit; cursor: pointer }
+button:focus-visible, a:focus-visible { outline: 3px solid #69dcca; outline-offset: 3px }
+[hidden] { display: none !important }
+.hero { position: relative; isolation: isolate; overflow: hidden; min-height: 100svh; display: flex; align-items: center; color: white; background: #422a4c }
+.hero-art, .hero-shade, .hero-player { position: absolute; pointer-events: none }
+.hero-art { width: 100%; height: 100%; object-fit: cover; inset: 0; z-index: -3 }
+.hero-shade { inset: 0; z-index: -2; background: linear-gradient(90deg,#1b112cdd,#2e1639a1 50%,#20113020),linear-gradient(0deg,#20113188,transparent 36%) }
+.hero-player { width: clamp(220px,47vw,590px); right: 2%; bottom: 2%; z-index: -1; filter: drop-shadow(0 12px 29px #45203991); animation: drift-hero 5s ease-in-out infinite }
+@keyframes drift-hero { 50% { transform: translateY(-14px) rotate(-2deg) } }
+.top { position: absolute; inset: 0 0 auto; padding: 1.1rem max(5vw,1rem); display: flex; justify-content: end; align-items: center; gap: .8rem; font-weight: 700 }
+.hero-content { padding: 4.6rem 7vw 3rem; width: min(100%,760px); text-shadow: 0 4px 18px #190e2e8c }
+.hero h1 { font-size: clamp(3rem,8.7vw,7.5rem); line-height: 1.01; margin: .45rem 0 1rem; letter-spacing: -.04em }
+.hero h1 em { color: #ffca77; font-style: normal }
+.hero-content p { line-height: 1.65; max-width: 29rem; margin: .8rem 0 }
+.season,.eyebrow { color: #ffda9a; font-weight: 750; letter-spacing: .03em }
+.hero-actions { display: flex; flex-wrap: wrap; gap: .65rem; margin-top: 1.35rem }
+.gold,.light { display: inline-flex; justify-content: center; align-items: center; gap: .5em; border-radius: 999px; padding: .62rem 1rem; min-height: 42px; text-decoration: none; font-weight: 750; border: 1px solid transparent; touch-action: manipulation }
+.gold { color: #39223c; background: linear-gradient(#ffe9ae,#ffc470); box-shadow: 0 5px 15px #2e10304d }
+.light { color: inherit; background: #ffffff20; border-color: #ffffff58; backdrop-filter: blur(8px) }
+.gold:hover { background: #fff0bd }
+.light:hover { background: #ffffff45 }
+.level-heading { display: flex; justify-content: space-between; align-items: center; gap: .7em; flex-wrap: wrap; margin-bottom: 1.2rem }
+.level-heading .light { color: #62344e; border-color: #dfbba1; background: #fffaf5 }
+.eyebrow { color: #995174; margin: 0 0 .3rem }
+.level-heading h2 { margin: 0; font-size: clamp(1.35rem,4vw,2.35rem) }
+.level-grid { display: grid; gap: 1rem; grid-template-columns: repeat(4,minmax(0,1fr)) }
+.stage-card { display: block; overflow: hidden; position: relative; min-width: 0; min-height: 148px; padding: 0; border: 1px solid #cf9b8d55; border-radius: 1.1rem; background: #674760; color: white; text-align: left; box-shadow: 0 7px 20px #935c4a21 }
+.stage-card img { display: block; width: 100%; height: 100%; aspect-ratio: 1.5; object-fit: cover; transition: transform .3s ease }
+.stage-card:hover img { transform: scale(1.05) }
+.stage-card div { position: absolute; inset: auto 0 0; padding: 1.4rem .85rem .8rem; background: linear-gradient(transparent,#2d183be0) }
+.stage-card span { font-size: .76rem; color: #ffdfa0 }
+.stage-card strong { display: block; font-size: clamp(.82rem,1.65vw,1.07rem) }
+#game { width: 100%; height: 100dvh; display: grid; place-items: center; touch-action: none }
+#field { position: relative; isolation: isolate; overflow: hidden; width: min(100vw,calc(100dvh * 1200 / 650)); aspect-ratio: 1200 / 650; background: #563b5b; --u: clamp(.54rem,1.75vw,1rem) }
+#scene,#floatables,#intro,.landscape { position: absolute; inset: 0; width: 100%; height: 100% }
+.landscape { pointer-events: none; overflow: hidden; contain: strict }
+#scenery-far,#scenery-grass { position: absolute; left: 0; display: block; will-change: transform }
+#scenery-far { top: 0; width: 103.1898%; height: 100%; object-fit: fill }
+#scenery-grass { bottom: 0; width: 200%; height: 32.8%; background-repeat: repeat-x; background-size: 50% 100% }
+.landscape::after { content: ""; position: absolute; inset: 0; background: linear-gradient(#2a163b10,transparent 65%,#2714332a) }
+#scene { display: block; pointer-events: none }
+#floatables { pointer-events: none; z-index: 2 }
+#stage-wipe { position: absolute; inset: 0; z-index: 5; display: grid; align-content: center; justify-items: center; gap: .3em; padding: 1em; pointer-events: none; opacity: 0; transition: opacity .21s ease-in; color: #fff3d4; background: radial-gradient(ellipse at 50% 48%,#5b2c56,#211129 76%); text-align: center }
+#stage-wipe.visible { opacity: 1 }
+#stage-wipe.fade-out { opacity: 0; transition: opacity .36s ease-out }
+#wipe-index { display: block; color: #ffce89; font-size: 1.2em }
+#wipe-name { display: block; font-size: clamp(1.25rem,4vw,2.4rem); line-height: 1.5 }
+@media (prefers-reduced-motion: reduce) {
+  #stage-wipe, #stage-wipe.fade-out { transition-duration: .09s }
+}
+.hud { position: absolute; z-index: 4; inset: 0 0 auto; display: grid; grid-template-columns: minmax(0,1fr) auto minmax(0,1fr); gap: .3em; align-items: start; padding: .48em .7em .92em; color: #fff8f1; background: linear-gradient(#201128c9,#2b1e361e,transparent); font-size: var(--u); pointer-events: none }
+.place { align-self: center; min-width: 0 }
+.place strong { display: block; color: #ffe1ac; overflow: hidden; text-overflow: ellipsis; white-space: nowrap }
+.place span { font-size: .8em }
+#hud-remaining { display: block; color: #fff0bc; font-size: .7em; white-space: nowrap }
+.hud-stats,.hud-actions { display: flex; gap: .3em; align-items: center }
+.hud-stats div { min-width: 4.1em; color: white; text-align: center; border: 1px solid #ffdb9b71; background: #34204bd9; border-radius: .7em; padding: .26em .42em }
+.hud-stats small { display: block; white-space: nowrap; color: #f6d7a0; font-size: .68em }
+.hud-stats b { display: block; font-size: 1.03em; font-variant-numeric: tabular-nums }
+.hud-stats .hearts { min-width: 0; border-color: #ffc4da83; background: #452447e6 }
+.hearts b { display: flex; justify-content: center; gap: .09em }
+.hearts b span { color: #ffd7e3; text-shadow: 0 0 .36em #ff67ad,0 .08em #ac305e }
+.hearts[data-count="0"] b span,.hearts[data-count="1"] b span:nth-child(n + 2),.hearts[data-count="2"] b span:nth-child(3) { color: #ac82a6; text-shadow: none }
+.hearts.heart-flash b { animation: heart-pulse .95s ease-in-out }
+@keyframes heart-pulse { 0%,35%,60%,100% { transform: scale(1) } 24%,49% { transform: scale(1.16) } }
+.hud-actions { justify-content: end; pointer-events: auto }
+.hud-actions .light { min-height: 32px; padding: .34em .7em; font-size: var(--u); white-space: nowrap; background: #3a224ac2; color: white }
+#bonus { position: absolute; z-index: 4; right: 1%; top: 25%; padding: .45em .68em; border-radius: 999px; color: #461c28; background: #ffe6a0; font-size: var(--u); pointer-events: none; box-shadow: 0 0 22px #ffe87da1 }
+#flight-guide,#feedback { position: absolute; z-index: 3; pointer-events: none; bottom: max(1.4%,env(safe-area-inset-bottom)); left: 50%; transform: translateX(-50%); margin: 0; width: max-content; max-width: 96%; text-align: center; color: #fff9f7; background: #271738e6; border: 1px solid #fff0d34a; border-radius: 999px; padding: .32em .88em; font-size: var(--u); line-height: 1.35 }
+#flight-guide,#flight-guide div { display: flex; align-items: center; gap: .52em }
+#flight-guide .guide-gesture { color: #ffdc9c; font-size: 1.25em; line-height: 1 }
+#flight-guide strong { color: #ffdc9c }
+#feedback:empty { display: none }
+#field:has(> #flight-guide:not([hidden])) #feedback[data-kind=""] { visibility: hidden }
+#field:has(> #feedback[data-kind]:not([data-kind=""])) #flight-guide { visibility: hidden }
+#feedback[data-kind=correct] { background: #206455ed }
+#feedback[data-kind=wrong] { background: #983655ee }
+#feedback[data-kind=coin] { background: #80511bea }
+.floating { position: absolute; display: grid; place-items: center; transform: translate(-50%,-50%); pointer-events: none; user-select: none; color: #321b40; font-size: var(--u) }
+.floating.word { width: 10.6em; height: 5.4em }
+.lotus-bed { position: absolute; top: calc(50% + .72em); width: 4.5em; height: 2.3em; object-fit: fill; filter: drop-shadow(0 .25em .33em #3f265e60); animation: lotus-drift 3.8s var(--float-phase,0s) ease-in-out infinite }
+.bubble { position: absolute; isolation: isolate; top: 50%; transform: translateY(-50%); display: grid; place-items: center; min-width: 3.15em; padding: .35em .73em; color: #321645; font-size: 1.55em; font-weight: 800; line-height: 1.28; white-space: nowrap; text-shadow: 0 1px 2px #fffdf8ee }
+.bubble::before,.bubble::after { content: ""; position: absolute; z-index: -1; pointer-events: none }
+.bubble::before {
+  inset: 0;
+  border-radius: 49% 51% 50% 50% / 48% 52% 48% 52%;
+  border: 1px solid #fff8ffef;
+  background: radial-gradient(ellipse at 22% 16%,#fff 0%,#fffcfbd9 14%,#ffeafa00 39%),radial-gradient(ellipse at 63% 75%,#e3eef1e8 0%,#f8e7fae6 58%,#cdbee9dc 87%,#ffd5f3ec);
+  box-shadow: inset 0 -.15em .35em #a56eb75e,inset 0 .1em .3em #fff9,0 .16em .42em #301c5873,0 0 .42em #faf2ff75;
+  animation: bubble-ripple 3.1s var(--float-phase,0s) ease-in-out infinite;
+}
+.bubble::after {
+  inset: 4% 7%;
+  border-radius: 50%;
+  opacity: .86;
+  background: radial-gradient(ellipse 16% 9% at 30% 16%,#fff 0%,#fff8 58%,transparent 100%),radial-gradient(ellipse 8% 7% at 76% 74%,#ffe5c4 0%,transparent 100%);
+  animation: bubble-light-turn 3.1s var(--float-phase,0s) ease-in-out infinite;
+}
+@keyframes bubble-ripple {
+  0%,100% { transform: rotate(-10deg) scale(.99,1.015) }
+  34% { transform: rotate(12deg) scale(1.035,.955); border-radius: 53% 47% 48% 52% / 52% 48% 52% 48% }
+  70% { transform: rotate(7deg) scale(.972,1.045); border-radius: 48% 52% 53% 47% / 45% 55% 45% 55% }
+}
+@keyframes bubble-light-turn {
+  0%,100% { transform: rotate(-15deg) scale(.96); opacity: .8 }
+  38% { transform: rotate(38deg) scale(1.02); opacity: .96 }
+  70% { transform: rotate(4deg) scale(.98); opacity: .54 }
+}
+@keyframes lotus-drift { 50% { transform: translateY(.25em) rotate(4deg) } }
+.penalty { position: absolute; top: calc(50% + 3.75em); z-index: 1; color: #fffef8; background: #4a285acf; font-size: .74em; padding: .14em .55em; border-radius: 999px; line-height: 1.3; white-space: nowrap }
+.coin { width: 3.65em; height: 3.65em; color: #67310f; perspective: 6em }
+.coin::before {
+  content: "";
+  position: absolute;
+  width: 3.05em;
+  height: 3.05em;
+  border: 1px solid #ffef9cd9;
+  border-radius: 50%;
+  background: radial-gradient(circle,#ffdc6552,transparent 71%);
+  box-shadow: 0 0 .65em #ffce63b3,inset 0 0 .45em #ffef9770;
+  animation: coin-halo 1.9s var(--float-phase,0s) ease-in-out infinite;
+}
+.coin::after {
+  content: "";
+  position: absolute;
+  top: 15%;
+  right: 18%;
+  width: .45em;
+  height: .45em;
+  border-radius: 50%;
+  background: #fff8c8;
+  box-shadow: 0 0 .45em .12em #fff5b7;
+  animation: coin-sparkle 1.9s var(--float-phase,0s) ease-in-out infinite;
+}
+.coin-face { display: grid; place-items: center; width: 2.46em; height: 2.46em; border-radius: 50%; border: .15em solid #ffec9d; background: radial-gradient(circle at 31% 23%,#fff5ba,#ffcb57 44%,#c77625 90%); box-shadow: .12em .08em 0 #ac642d,0 .14em .35em #52324d85,inset 0 0 0 .14em #9c522c,0 0 .5em #ffe1968c; font-weight: bold; animation: coin-rotate 1.9s var(--float-phase,0s) linear infinite }
+.coin.bonus-coin::before { border-color: #fff7bc; box-shadow: 0 0 .9em .25em #ffe5809c,inset 0 0 .6em #fff1a4 }
+.coin.bonus-coin .coin-face { background: radial-gradient(circle at 34% 25%,#fffbd1,#fff0a5 29%,#ffd151 57%,#ff953d); box-shadow: .12em .08em 0 #bc792c,0 0 .75em #fff6b4,inset 0 0 0 .14em #e7a02e }
+@keyframes coin-rotate {
+  from { transform: rotateY(0); filter: brightness(1.08) }
+  25%,75% { filter: brightness(1.24) }
+  50% { transform: rotateY(180deg); filter: brightness(.94) }
+  to { transform: rotateY(360deg); filter: brightness(1.08) }
+}
+@keyframes coin-halo { 50% { transform: scale(1.13); opacity: .65 } }
+@keyframes coin-sparkle { 0%,56%,100% { transform: scale(.5); opacity: .35 } 26%,76% { transform: scale(1.15); opacity: 1 } }
+#intro { z-index: 5; background: #2e2032; overflow: hidden; color: white }
+#intro img { position: absolute; pointer-events: none }
+.intro-house,.intro-room { inset: 0; width: 100%; height: 100%; object-fit: cover }
+.intro-room { opacity: 0 }
+.intro-vignette { position: absolute; inset: 0; background: radial-gradient(ellipse at center,transparent 38%,#24122d52),linear-gradient(0deg,#150c26ce,transparent 28%) }
+.door-glow,.magic-swirl { position: absolute; pointer-events: none }
+.door-glow { left: 17%; top: 53%; width: 12%; aspect-ratio: 1; transform: translate(-50%,-50%); border-radius: 50%; background: radial-gradient(circle,#ffe4a4d0, #ed7a9a7e 25%,transparent 70%); mix-blend-mode: screen }
+.magic-swirl { width: 40%; aspect-ratio: 1; top: 48%; left: 48%; transform: translate(-50%,-50%); border-radius: 50%; background: conic-gradient(from 25deg,transparent 0%,#ffe8f500 16%,#fff2f4a8 27%,#fbb5e900 45%,#ffcfbdaa 62%,transparent 77%); mask-image: radial-gradient(transparent 48%,#000 57%,transparent 68%) }
+.intro-standing { width: 22%; left: 47%; bottom: 8%; transform: translateX(-50%); filter: drop-shadow(0 0 17px #ffb3dc7f) }
+.intro-flying { width: 34%; top: 26%; left: 29%; opacity: 0; filter: drop-shadow(0 0 20px #ffd2f190) }
+#intro-caption { position: absolute; inset: auto 20% 4%; margin: 0; text-align: center; font-size: clamp(.62rem,2.3vw,1.24rem); text-shadow: 0 2px 8px #191226; font-weight: bold }
+#skip,#intro-audio { position: absolute; top: 4%; right: 3%; min-height: 30px; padding: .32em .65em; font-size: clamp(.63rem,1.85vw,.95rem) }
+#intro-audio { left: 3%; right: auto }
+#intro.story-playing .intro-house { animation: house-camera var(--intro-duration,3.8s) ease both }
+#intro.story-playing .intro-room { animation: room-cut var(--intro-duration,3.8s) ease both }
+#intro.story-playing .door-glow { animation: door-light var(--intro-duration,3.8s) ease both }
+#intro.story-playing .magic-swirl { animation: swirl var(--intro-duration,3.8s) ease both }
+#intro.story-playing .intro-standing { animation: stand-enter var(--intro-duration,3.8s) ease both }
+#intro.story-playing .intro-flying { animation: launch var(--intro-duration,3.8s) ease both }
+@keyframes house-camera { 0%{transform:scale(1)} 42%{transform:scale(1.07)} 100%{transform:scale(1.13)} }
+@keyframes room-cut { 0%,16%{opacity:0} 32%,51%{opacity:1} 68%,100%{opacity:0} }
+@keyframes door-light { 0%,10%{opacity:0} 28%,57%{opacity:1} 90%,100%{opacity:0} }
+@keyframes swirl { 0%,24%{opacity:0;transform:translate(-50%,-40%) rotate(0) scale(.6)} 48%{opacity:1} 73%{opacity:.8} 90%,100%{opacity:0;transform:translate(-50%,-58%) rotate(620deg) scale(1.7)} }
+@keyframes stand-enter { 0%,7%{transform:translate(-149%,9%) scale(.43);opacity:0} 18%{transform:translate(-133%,4%) scale(.51);opacity:1} 40%,49%{opacity:1;transform:translate(-50%,0) scale(1)} 57%,100%{opacity:0;transform:translate(-57%,-7%) scale(1.12)} }
+@keyframes launch { 0%,55%{opacity:0;transform:translate(-23%,18%) scale(.53)} 65%{opacity:1} 92%,100%{opacity:1;transform:translate(85%,-22%) scale(.84) rotate(-6deg)} }
+#panel,#level-menu { width: min(90vw,510px); padding: 1.35rem; color: #352443; border: 1px solid #e8bca0; border-radius: 1.3rem; background: #fff7e9; box-shadow: 0 22px 75px #1810276b }
+#panel::backdrop,#level-menu::backdrop { background: #160e28a4; backdrop-filter: blur(4px) }
+#panel h2 { margin: .2rem 0 .6rem }
+#panel p { line-height: 1.5 }
+.panel-actions { display: flex; flex-wrap: wrap; gap: .6rem; margin-top: 1.15rem }
+.panel-actions .light { color: #5e394f; background: #f8e8f1; border-color: #deb5cb }
+.recap { color: #78445e; font-size: .9em }
+@media(max-width:720px) {
+  .level-grid { grid-template-columns: repeat(2,minmax(0,1fr)) }
+  .hero-shade { background: linear-gradient(90deg,#1b112ddd,#2e163994 58%,#20113038) }
+}
+@media(orientation:portrait) and (max-width:600px) {
+  .hero-player { right: -14%; bottom: 8%; width: 70vw; opacity: .8 }
+  .hero h1 { font-size: clamp(2.7rem,11vw,4.6rem) }
+  .hero-content { width: 80% }
+  #field { --u: clamp(.63rem,2.25vw,.88rem) }
+  .hud { grid-template-columns: minmax(0,1fr) auto auto }
+  .hud .place span { display: none }
+  .hud #hud-remaining { display: block }
+  .hud-actions .light { min-height: 24px; padding-inline: .53em }
+  .hud-stats div { min-width: 3.45em; padding-inline: .28em }
+  .hud-stats small { font-size: .79em }
+  .floating.word { font-size: clamp(.55rem,2.25vw,.8rem); width: 8.5em }
+}
+@media(prefers-reduced-motion:reduce) {
+  .hero-player,.lotus-bed,.bubble::before,.bubble::after,.coin-face,.coin::before,.coin::after,.hearts.heart-flash b { animation: none }
+  html { scroll-behavior: auto }
+}
+
+#start { font-size: clamp(1.05rem,3vw,1.48rem); padding: .71em 1.28em; border: 1px solid #fff0b9; box-shadow: inset 0 -4px 0 #c78c476e,0 7px 0 #724059,0 12px 32px #1c102e8d; transition: transform .16s,box-shadow .16s }
+#start:hover { transform: translateY(-2px) }
+#start:active { transform: translateY(4px); box-shadow: inset 0 -2px 0 #c78c476e,0 3px 0 #724059 }
+#start-meta { font-size: .88rem; color: #ffe2ad; margin-top: 1rem }
+.menu-motes { position: absolute; inset: 8% 0 0 39%; pointer-events: none; z-index: -1; opacity: .72; background: radial-gradient(circle at 45% 34%,#fffac6 0 2px,transparent 6px),radial-gradient(circle at 74% 46%,#fff8ec 0 1px,transparent 5px),radial-gradient(circle at 80% 66%,#fdf1cb 0 2px,transparent 6px),radial-gradient(circle at 22% 75%,#ffc7eb 0 1px,transparent 6px),radial-gradient(circle at 11% 62%,#ffeecf 0 2px,transparent 6px),radial-gradient(circle at 61% 17%,#ffc4e9 0 1px,transparent 5px),radial-gradient(ellipse at 63% 65%,#e75a9b30,transparent 64%); animation: mote-drift 5s ease-in-out infinite }
+@keyframes mote-drift { 50% { transform: translateY(-15px); opacity: .42 } }
+#level-menu { width: min(90vw,850px); padding: clamp(.9rem,3vw,1.45rem); max-height: 86dvh }
+#level-menu .stage-card { min-height: 105px }
+@media(max-height:520px) and (orientation:landscape) {
+  .hero-content { padding: 2.7rem 6vw 1.4rem }
+  .hero h1 { font-size: clamp(2.35rem,12.4vh,4.3rem); margin: .25rem 0 .55rem }
+  .hero-content p { margin: .38rem 0 }
+  .hero-actions { margin-top: .75rem }
+  #start-meta { margin-top: .7rem }
+  .top { padding: .7rem 5vw }
+  .hero-player { width: min(45vw,88vh); right: 7% }
+}
+@media(prefers-reduced-motion:reduce) {
+  .menu-motes { animation:none }
+}
+
+.transition-notice { padding: .55rem .8rem; border-radius: .75rem; background: #fbebce; color: #6b4528; font-weight: 750 }
+</style>
+</head>
+<body>
+<main id="lobby">
+  <section class="hero">
+    <img id="hero-art" class="hero-art" alt="">
+    <div class="hero-shade"></div>
+    <img id="hero-player" class="hero-player" alt="" aria-hidden="true">
+    <div class="menu-motes" aria-hidden="true"></div>
+    <header class="top">
+      <a id="chrome-open" class="light" hidden>เปิดใน Chrome</a>
+      <button class="light" data-audio aria-pressed="true">เสียงเปิด</button>
+    </header>
+    <div class="hero-content">
+      <p class="season">แม่ ก กา</p>
+      <h1>กระสือน้อย<br><em>ผจญภัย</em></h1>
+      <p class="menu-instruction">ลากขึ้นลงเพื่อบินชนฟองคำแม่ ก กาและเหรียญ หลบคำที่มีตัวสะกด</p>
+      <div class="hero-actions">
+        <button id="start" class="gold"><span aria-hidden="true">▶</span> <span id="start-label">เริ่มเล่น</span></button>
+        <button id="show-levels" class="light">เลือกด่าน</button>
+      </div>
+      <p id="start-meta"></p>
+    </div>
+  </section>
+</main>
+<section id="game" hidden aria-label="สนามเกม">
+  <div id="field" tabindex="-1" aria-label="สนามบิน ใช้ลูกศรขึ้นลงหรือแตะแล้วลากเพื่อเปลี่ยนระดับ">
+    <div class="landscape" aria-hidden="true">
+      <img id="scenery-far" alt="" draggable="false">
+      <div id="scenery-grass"></div>
+    </div>
+    <canvas id="scene" aria-hidden="true"></canvas>
+    <div id="floatables" aria-label="ฟองคำและเหรียญ"></div>
+    <header class="hud">
+      <div class="place"><strong id="hud-place"></strong><span id="hud-matra">แม่ ก กา</span><span id="hud-remaining"></span></div>
+      <div class="hud-stats"><div><small>คำถูก</small><b id="hud-words">0/20</b></div><div><small>คะแนนรวม</small><b id="hud-score">0</b></div><div><small>เหรียญ</small><b id="hud-coins">0</b></div><div class="hearts" id="hud-hearts" data-count="3" aria-label="หัวใจ 3 จาก 3"><small>หัวใจ</small><b aria-hidden="true"><span class="heart" data-filled="true">♥</span><span class="heart" data-filled="true">♥</span><span class="heart" data-filled="true">♥</span></b></div></div>
+      <div class="hud-actions"><button class="light" data-audio aria-pressed="true">เสียงเปิด</button><button id="pause" class="light">พัก</button></div>
+    </header>
+    <div id="bonus" hidden>โบนัสเหรียญทอง <b id="bonus-time"></b></div>
+    <div id="flight-guide" hidden>
+      <span class="guide-gesture" aria-hidden="true">↕</span>
+      <div><strong>ลากขึ้นลงเพื่อบิน</strong><span>ชนคำถูกและเหรียญ · ชนคำลวงเสียหัวใจ</span></div>
+    </div>
+    <p id="feedback" role="status" aria-live="polite">ชนคำที่ไม่มีตัวสะกด · หลบคำลวง</p>
+    <div id="stage-wipe" hidden aria-live="polite">
+      <div><span id="wipe-index"></span><strong id="wipe-name"></strong></div>
+    </div>
+    <aside id="intro" hidden aria-label="ฉากแปลงร่าง">
+      <img id="intro-house" alt="" class="intro-house">
+      <img id="intro-room" alt="" class="intro-room">
+      <div class="intro-vignette"></div>
+      <div class="door-glow"></div>
+      <div class="magic-swirl"></div>
+      <img id="intro-standing" alt="" class="intro-standing">
+      <img id="intro-flying" alt="" class="intro-flying">
+      <p id="intro-caption" role="status">บ้านน้อยริมทุ่ง</p>
+      <button id="intro-audio" class="light" data-audio aria-pressed="true">เสียงเปิด</button>
+      <button id="skip" class="light">ข้ามฉาก →</button>
+    </aside>
+  </div>
+</section>
+<dialog id="level-menu" aria-labelledby="level-heading">
+  <div class="level-heading"><h2 id="level-heading">เลือกด่าน</h2><button id="close-levels" class="light">ปิด</button></div>
+  <div class="level-grid" id="stage-list"></div>
+</dialog>
+<dialog id="panel">
+  <div id="panel-content"></div>
+</dialog>
+<script>{
+'use strict';
+globalThis.arcadePack={"levels":[{"id":1,"season":1,"local":1,"name":"คันนายามเช้า","theme":"rice","time":"morning","targets":[{"word":"ตา","reading":"ตา","matra":1,"reason":"ไม่มีพยัญชนะเป็นตัวสะกด","difficulty":1,"tts":"ตา","penalty":30,"kind":"target"},{"word":"หู","reading":"หู","matra":1,"reason":"ไม่มีพยัญชนะเป็นตัวสะกด","difficulty":1,"tts":"หู","penalty":75,"kind":"target"},{"word":"ปู","reading":"ปู","matra":1,"reason":"ไม่มีพยัญชนะเป็นตัวสะกด","difficulty":1,"tts":"ปู","penalty":30,"kind":"target"},{"word":"งู","reading":"งู","matra":1,"reason":"ไม่มีพยัญชนะเป็นตัวสะกด","difficulty":1,"tts":"งู","penalty":75,"kind":"target"},{"word":"ดู","reading":"ดู","matra":1,"reason":"ไม่มีพยัญชนะเป็นตัวสะกด","difficulty":1,"tts":"ดู","penalty":30,"kind":"target"},{"word":"รู","reading":"รู","matra":1,"reason":"ไม่มีพยัญชนะเป็นตัวสะกด","difficulty":1,"tts":"รู","penalty":75,"kind":"target"},{"word":"ถู","reading":"ถู","matra":1,"reason":"ไม่มีพยัญชนะเป็นตัวสะกด","difficulty":1,"tts":"ถู","penalty":30,"kind":"target"},{"word":"กา","reading":"กา","matra":1,"reason":"ไม่มีพยัญชนะเป็นตัวสะกด","difficulty":1,"tts":"กา","penalty":75,"kind":"target"},{"word":"นา","reading":"นา","matra":1,"reason":"ไม่มีพยัญชนะเป็นตัวสะกด","difficulty":1,"tts":"นา","penalty":30,"kind":"target"},{"word":"ขา","reading":"ขา","matra":1,"reason":"ไม่มีพยัญชนะเป็นตัวสะกด","difficulty":1,"tts":"ขา","penalty":75,"kind":"target"},{"word":"มา","reading":"มา","matra":1,"reason":"ไม่มีพยัญชนะเป็นตัวสะกด","difficulty":1,"tts":"มา","penalty":30,"kind":"target"},{"word":"ตี","reading":"ตี","matra":1,"reason":"ไม่มีพยัญชนะเป็นตัวสะกด","difficulty":1,"tts":"ตี","penalty":75,"kind":"target"},{"word":"ปี","reading":"ปี","matra":1,"reason":"ไม่มีพยัญชนะเป็นตัวสะกด","difficulty":1,"tts":"ปี","penalty":30,"kind":"target"},{"word":"สี","reading":"สี","matra":1,"reason":"ไม่มีพยัญชนะเป็นตัวสะกด","difficulty":1,"tts":"สี","penalty":75,"kind":"target"},{"word":"ดี","reading":"ดี","matra":1,"reason":"ไม่มีพยัญชนะเป็นตัวสะกด","difficulty":1,"tts":"ดี","penalty":30,"kind":"target"},{"word":"มี","reading":"มี","matra":1,"reason":"ไม่มีพยัญชนะเป็นตัวสะกด","difficulty":1,"tts":"มี","penalty":75,"kind":"target"},{"word":"มือ","reading":"มือ","matra":1,"reason":"ไม่มีตัวสะกด ส่วนท้ายเป็นรูปสระ","difficulty":1,"tts":"มือ","penalty":30,"kind":"target"},{"word":"ถือ","reading":"ถือ","matra":1,"reason":"ไม่มีตัวสะกด ส่วนท้ายเป็นรูปสระ","difficulty":1,"tts":"ถือ","penalty":75,"kind":"target"},{"word":"คือ","reading":"คือ","matra":1,"reason":"ไม่มีตัวสะกด ส่วนท้ายเป็นรูปสระ","difficulty":1,"tts":"คือ","penalty":30,"kind":"target"},{"word":"โต๊ะ","reading":"โต๊ะ","matra":1,"reason":"ไม่มีพยัญชนะเป็นตัวสะกด","difficulty":1,"tts":"โต๊ะ","penalty":75,"kind":"target"}],"decoys":[{"word":"กาง","reading":"กาง","matra":2,"reason":"มีเสียง ง สะกดท้าย","difficulty":1,"tts":"กาง","penalty":75,"kind":"decoy"},{"word":"คาง","reading":"คาง","matra":2,"reason":"มีเสียง ง สะกดท้าย","difficulty":1,"tts":"คาง","penalty":30,"kind":"decoy"},{"word":"ลิง","reading":"ลิง","matra":2,"reason":"มีเสียง ง สะกดท้าย","difficulty":1,"tts":"ลิง","penalty":75,"kind":"decoy"},{"word":"ทาง","reading":"ทาง","matra":2,"reason":"มีเสียง ง สะกดท้าย","difficulty":1,"tts":"ทาง","penalty":30,"kind":"decoy"},{"word":"นาง","reading":"นาง","matra":2,"reason":"มีเสียง ง สะกดท้าย","difficulty":1,"tts":"นาง","penalty":75,"kind":"decoy"},{"word":"บาง","reading":"บาง","matra":2,"reason":"มีเสียง ง สะกดท้าย","difficulty":1,"tts":"บาง","penalty":30,"kind":"decoy"},{"word":"วาง","reading":"วาง","matra":2,"reason":"มีเสียง ง สะกดท้าย","difficulty":1,"tts":"วาง","penalty":75,"kind":"decoy"},{"word":"หาง","reading":"หาง","matra":2,"reason":"มีเสียง ง สะกดท้าย","difficulty":1,"tts":"หาง","penalty":30,"kind":"decoy"}],"reviewed":false,"art":{"source":"/assets/reference/page-1-image-2.jpeg","status":"มีภาพอ้างอิงประกอบ UI เก่า ต้องวาดฉากสะอาดใหม่","landmark":"คันนายามเช้า","pdfPage":1,"sourceLabel":1},"reviewPurpose":"เริ่มจากคำพื้นฐานและตัวสะกดตรงมาตรา","targetPool":[{"word":"ตา","reading":"ตา","matra":1,"reason":"ไม่มีพยัญชนะเป็นตัวสะกด","difficulty":1,"tts":"ตา","penalty":30,"kind":"target"},{"word":"หู","reading":"หู","matra":1,"reason":"ไม่มีพยัญชนะเป็นตัวสะกด","difficulty":1,"tts":"หู","penalty":75,"kind":"target"},{"word":"ปู","reading":"ปู","matra":1,"reason":"ไม่มีพยัญชนะเป็นตัวสะกด","difficulty":1,"tts":"ปู","penalty":30,"kind":"target"},{"word":"งู","reading":"งู","matra":1,"reason":"ไม่มีพยัญชนะเป็นตัวสะกด","difficulty":1,"tts":"งู","penalty":75,"kind":"target"},{"word":"ดู","reading":"ดู","matra":1,"reason":"ไม่มีพยัญชนะเป็นตัวสะกด","difficulty":1,"tts":"ดู","penalty":30,"kind":"target"},{"word":"รู","reading":"รู","matra":1,"reason":"ไม่มีพยัญชนะเป็นตัวสะกด","difficulty":1,"tts":"รู","penalty":75,"kind":"target"},{"word":"ถู","reading":"ถู","matra":1,"reason":"ไม่มีพยัญชนะเป็นตัวสะกด","difficulty":1,"tts":"ถู","penalty":30,"kind":"target"},{"word":"กา","reading":"กา","matra":1,"reason":"ไม่มีพยัญชนะเป็นตัวสะกด","difficulty":1,"tts":"กา","penalty":75,"kind":"target"},{"word":"นา","reading":"นา","matra":1,"reason":"ไม่มีพยัญชนะเป็นตัวสะกด","difficulty":1,"tts":"นา","penalty":30,"kind":"target"},{"word":"ขา","reading":"ขา","matra":1,"reason":"ไม่มีพยัญชนะเป็นตัวสะกด","difficulty":1,"tts":"ขา","penalty":75,"kind":"target"},{"word":"มา","reading":"มา","matra":1,"reason":"ไม่มีพยัญชนะเป็นตัวสะกด","difficulty":1,"tts":"มา","penalty":30,"kind":"target"},{"word":"ตี","reading":"ตี","matra":1,"reason":"ไม่มีพยัญชนะเป็นตัวสะกด","difficulty":1,"tts":"ตี","penalty":75,"kind":"target"},{"word":"ปี","reading":"ปี","matra":1,"reason":"ไม่มีพยัญชนะเป็นตัวสะกด","difficulty":1,"tts":"ปี","penalty":30,"kind":"target"},{"word":"สี","reading":"สี","matra":1,"reason":"ไม่มีพยัญชนะเป็นตัวสะกด","difficulty":1,"tts":"สี","penalty":75,"kind":"target"},{"word":"ดี","reading":"ดี","matra":1,"reason":"ไม่มีพยัญชนะเป็นตัวสะกด","difficulty":1,"tts":"ดี","penalty":30,"kind":"target"},{"word":"มี","reading":"มี","matra":1,"reason":"ไม่มีพยัญชนะเป็นตัวสะกด","difficulty":1,"tts":"มี","penalty":75,"kind":"target"},{"word":"มือ","reading":"มือ","matra":1,"reason":"ไม่มีตัวสะกด ส่วนท้ายเป็นรูปสระ","difficulty":1,"tts":"มือ","penalty":30,"kind":"target"},{"word":"ถือ","reading":"ถือ","matra":1,"reason":"ไม่มีตัวสะกด ส่วนท้ายเป็นรูปสระ","difficulty":1,"tts":"ถือ","penalty":75,"kind":"target"},{"word":"คือ","reading":"คือ","matra":1,"reason":"ไม่มีตัวสะกด ส่วนท้ายเป็นรูปสระ","difficulty":1,"tts":"คือ","penalty":30,"kind":"target"},{"word":"โต๊ะ","reading":"โต๊ะ","matra":1,"reason":"ไม่มีพยัญชนะเป็นตัวสะกด","difficulty":1,"tts":"โต๊ะ","penalty":75,"kind":"target"},{"word":"ผ้า","reading":"ผ้า","tts":"ผ้า","matra":1,"reason":"ไม่มีพยัญชนะเป็นตัวสะกด","penalty":30,"difficulty":1},{"word":"ฟ้า","reading":"ฟ้า","tts":"ฟ้า","matra":1,"reason":"ไม่มีพยัญชนะเป็นตัวสะกด","penalty":75,"difficulty":1},{"word":"ม้า","reading":"ม้า","tts":"ม้า","matra":1,"reason":"ไม่มีพยัญชนะเป็นตัวสะกด","penalty":30,"difficulty":1},{"word":"จอ","reading":"จอ","tts":"จอ","matra":1,"reason":"ไม่มีพยัญชนะเป็นตัวสะกด","penalty":75,"difficulty":1},{"word":"ตอ","reading":"ตอ","tts":"ตอ","matra":1,"reason":"ไม่มีพยัญชนะเป็นตัวสะกด","penalty":30,"difficulty":1},{"word":"รอ","reading":"รอ","tts":"รอ","matra":1,"reason":"ไม่มีพยัญชนะเป็นตัวสะกด","penalty":75,"difficulty":1},{"word":"ขอ","reading":"ขอ","tts":"ขอ","matra":1,"reason":"ไม่มีพยัญชนะเป็นตัวสะกด","penalty":30,"difficulty":1},{"word":"พอ","reading":"พอ","tts":"พอ","matra":1,"reason":"ไม่มีพยัญชนะเป็นตัวสะกด","penalty":75,"difficulty":1},{"word":"คอ","reading":"คอ","tts":"คอ","matra":1,"reason":"ไม่มีพยัญชนะเป็นตัวสะกด","penalty":30,"difficulty":1},{"word":"ยอ","reading":"ยอ","tts":"ยอ","matra":1,"reason":"ไม่มีพยัญชนะเป็นตัวสะกด","penalty":75,"difficulty":1},{"word":"บ่อ","reading":"บ่อ","tts":"บ่อ","matra":1,"reason":"ไม่มีพยัญชนะเป็นตัวสะกด","penalty":30,"difficulty":1},{"word":"หม้อ","reading":"หม้อ","tts":"หม้อ","matra":1,"reason":"ไม่มีพยัญชนะเป็นตัวสะกด","penalty":75,"difficulty":1},{"word":"ล้อ","reading":"ล้อ","tts":"ล้อ","matra":1,"reason":"ไม่มีพยัญชนะเป็นตัวสะกด","penalty":30,"difficulty":1},{"word":"พา","reading":"พา","tts":"พา","matra":1,"reason":"ไม่มีพยัญชนะเป็นตัวสะกด","penalty":75,"difficulty":1},{"word":"ชา","reading":"ชา","tts":"ชา","matra":1,"reason":"ไม่มีพยัญชนะเป็นตัวสะกด","penalty":30,"difficulty":1},{"word":"ป่า","reading":"ป่า","tts":"ป่า","matra":1,"reason":"ไม่มีพยัญชนะเป็นตัวสะกด","penalty":75,"difficulty":1}],"decoyPool":[{"word":"กาง","reading":"กาง","matra":2,"reason":"มีเสียง ง สะกดท้าย","difficulty":1,"tts":"กาง","penalty":75,"kind":"decoy"},{"word":"คาง","reading":"คาง","matra":2,"reason":"มีเสียง ง สะกดท้าย","difficulty":1,"tts":"คาง","penalty":30,"kind":"decoy"},{"word":"ลิง","reading":"ลิง","tts":"ลิง","matra":2,"reason":"มีเสียง ง สะกด","penalty":75,"difficulty":1},{"word":"ทาง","reading":"ทาง","matra":2,"reason":"มีเสียง ง สะกดท้าย","difficulty":1,"tts":"ทาง","penalty":30,"kind":"decoy"},{"word":"นาง","reading":"นาง","matra":2,"reason":"มีเสียง ง สะกดท้าย","difficulty":1,"tts":"นาง","penalty":75,"kind":"decoy"},{"word":"บาง","reading":"บาง","matra":2,"reason":"มีเสียง ง สะกดท้าย","difficulty":1,"tts":"บาง","penalty":30,"kind":"decoy"},{"word":"วาง","reading":"วาง","matra":2,"reason":"มีเสียง ง สะกดท้าย","difficulty":1,"tts":"วาง","penalty":75,"kind":"decoy"},{"word":"หาง","reading":"หาง","matra":2,"reason":"มีเสียง ง สะกดท้าย","difficulty":1,"tts":"หาง","penalty":30,"kind":"decoy"},{"word":"ลุง","reading":"ลุง","tts":"ลุง","matra":2,"reason":"มีเสียง ง สะกด","penalty":30,"difficulty":1},{"word":"ลม","reading":"ลม","tts":"ลม","matra":3,"reason":"มีเสียง ม สะกด","penalty":75,"difficulty":1},{"word":"ผม","reading":"ผม","tts":"ผม","matra":3,"reason":"มีเสียง ม สะกด","penalty":30,"difficulty":1},{"word":"หอย","reading":"หอย","tts":"หอย","matra":4,"reason":"มีเสียง ย สะกด","penalty":75,"difficulty":1},{"word":"กล้วย","reading":"กล้วย","tts":"กล้วย","matra":4,"reason":"มีเสียง ย สะกด","penalty":30,"difficulty":1},{"word":"ดาว","reading":"ดาว","tts":"ดาว","matra":5,"reason":"มีเสียง ว สะกด","penalty":75,"difficulty":1},{"word":"แมว","reading":"แมว","tts":"แมว","matra":5,"reason":"มีเสียง ว สะกด","penalty":30,"difficulty":1},{"word":"นก","reading":"นก","tts":"นก","matra":6,"reason":"มีเสียง ก สะกด","penalty":75,"difficulty":1},{"word":"ลูก","reading":"ลูก","tts":"ลูก","matra":6,"reason":"มีเสียง ก สะกด","penalty":30,"difficulty":1},{"word":"มด","reading":"มด","tts":"มด","matra":7,"reason":"มีเสียง ด สะกด","penalty":75,"difficulty":1},{"word":"กัด","reading":"กัด","tts":"กัด","matra":7,"reason":"มีเสียง ด สะกด","penalty":30,"difficulty":1},{"word":"จาน","reading":"จาน","tts":"จาน","matra":8,"reason":"มีเสียง น สะกด","penalty":75,"difficulty":1},{"word":"พาน","reading":"พาน","tts":"พาน","matra":8,"reason":"มีเสียง น สะกด","penalty":30,"difficulty":1},{"word":"กบ","reading":"กบ","tts":"กบ","matra":9,"reason":"มีเสียง บ สะกด","penalty":75,"difficulty":1},{"word":"จับ","reading":"จับ","tts":"จับ","matra":9,"reason":"มีเสียง บ สะกด","penalty":30,"difficulty":1}]},{"id":2,"season":1,"local":2,"name":"ชาวนากับควาย","theme":"rice","time":"day","targets":[{"word":"ขา","reading":"ขา","matra":1,"reason":"ไม่มีพยัญชนะเป็นตัวสะกด","difficulty":1,"tts":"ขา","penalty":30,"kind":"target"},{"word":"มา","reading":"มา","matra":1,"reason":"ไม่มีพยัญชนะเป็นตัวสะกด","difficulty":1,"tts":"มา","penalty":75,"kind":"target"},{"word":"ตี","reading":"ตี","matra":1,"reason":"ไม่มีพยัญชนะเป็นตัวสะกด","difficulty":1,"tts":"ตี","penalty":30,"kind":"target"},{"word":"ปี","reading":"ปี","matra":1,"reason":"ไม่มีพยัญชนะเป็นตัวสะกด","difficulty":1,"tts":"ปี","penalty":75,"kind":"target"},{"word":"สี","reading":"สี","matra":1,"reason":"ไม่มีพยัญชนะเป็นตัวสะกด","difficulty":1,"tts":"สี","penalty":30,"kind":"target"},{"word":"ดี","reading":"ดี","matra":1,"reason":"ไม่มีพยัญชนะเป็นตัวสะกด","difficulty":1,"tts":"ดี","penalty":75,"kind":"target"},{"word":"มี","reading":"มี","matra":1,"reason":"ไม่มีพยัญชนะเป็นตัวสะกด","difficulty":1,"tts":"มี","penalty":30,"kind":"target"},{"word":"มือ","reading":"มือ","matra":1,"reason":"ไม่มีตัวสะกด ส่วนท้ายเป็นรูปสระ","difficulty":1,"tts":"มือ","penalty":75,"kind":"target"},{"word":"ถือ","reading":"ถือ","matra":1,"reason":"ไม่มีตัวสะกด ส่วนท้ายเป็นรูปสระ","difficulty":1,"tts":"ถือ","penalty":30,"kind":"target"},{"word":"คือ","reading":"คือ","matra":1,"reason":"ไม่มีตัวสะกด ส่วนท้ายเป็นรูปสระ","difficulty":1,"tts":"คือ","penalty":75,"kind":"target"},{"word":"โต๊ะ","reading":"โต๊ะ","matra":1,"reason":"ไม่มีพยัญชนะเป็นตัวสะกด","difficulty":1,"tts":"โต๊ะ","penalty":30,"kind":"target"},{"word":"ครู","reading":"ครู","matra":1,"reason":"ไม่มีพยัญชนะเป็นตัวสะกด","difficulty":1,"tts":"ครู","penalty":75,"kind":"target"},{"word":"หมู","reading":"หมู","matra":1,"reason":"ไม่มีพยัญชนะเป็นตัวสะกด","difficulty":1,"tts":"หมู","penalty":30,"kind":"target"},{"word":"หนู","reading":"หนู","matra":1,"reason":"ไม่มีพยัญชนะเป็นตัวสะกด","difficulty":1,"tts":"หนู","penalty":75,"kind":"target"},{"word":"ยา","reading":"ยา","matra":1,"reason":"ไม่มีพยัญชนะเป็นตัวสะกด","difficulty":1,"tts":"ยา","penalty":30,"kind":"target"},{"word":"ปลา","reading":"ปลา","matra":1,"reason":"ไม่มีพยัญชนะเป็นตัวสะกด","difficulty":1,"tts":"ปลา","penalty":75,"kind":"target"},{"word":"ปู่","reading":"ปู่","matra":1,"reason":"ไม่มีพยัญชนะเป็นตัวสะกด","difficulty":1,"tts":"ปู่","penalty":30,"kind":"target"},{"word":"ย่า","reading":"ย่า","matra":1,"reason":"ไม่มีพยัญชนะเป็นตัวสะกด","difficulty":1,"tts":"ย่า","penalty":75,"kind":"target"},{"word":"พ่อ","reading":"พ่อ","matra":1,"reason":"ไม่มีพยัญชนะเป็นตัวสะกด","difficulty":1,"tts":"พ่อ","penalty":30,"kind":"target"},{"word":"แม่","reading":"แม่","matra":1,"reason":"ไม่มีพยัญชนะเป็นตัวสะกด","difficulty":1,"tts":"แม่","penalty":75,"kind":"target"}],"decoys":[{"word":"ลิง","reading":"ลิง","matra":2,"reason":"มีเสียง ง สะกดท้าย","difficulty":1,"tts":"ลิง","penalty":75,"kind":"decoy"},{"word":"ทาง","reading":"ทาง","matra":2,"reason":"มีเสียง ง สะกดท้าย","difficulty":1,"tts":"ทาง","penalty":30,"kind":"decoy"},{"word":"นาง","reading":"นาง","matra":2,"reason":"มีเสียง ง สะกดท้าย","difficulty":1,"tts":"นาง","penalty":75,"kind":"decoy"},{"word":"บาง","reading":"บาง","matra":2,"reason":"มีเสียง ง สะกดท้าย","difficulty":1,"tts":"บาง","penalty":30,"kind":"decoy"},{"word":"วาง","reading":"วาง","matra":2,"reason":"มีเสียง ง สะกดท้าย","difficulty":1,"tts":"วาง","penalty":75,"kind":"decoy"},{"word":"หาง","reading":"หาง","matra":2,"reason":"มีเสียง ง สะกดท้าย","difficulty":1,"tts":"หาง","penalty":30,"kind":"decoy"},{"word":"ช้าง","reading":"ช้าง","matra":2,"reason":"มีเสียง ง สะกดท้าย","difficulty":1,"tts":"ช้าง","penalty":75,"kind":"decoy"},{"word":"กวาง","reading":"กวาง","matra":2,"reason":"มีเสียง ง สะกดท้าย","difficulty":1,"tts":"กวาง","penalty":30,"kind":"decoy"}],"reviewed":false,"art":{"source":"/assets/reference/page-1-image-1.jpeg","status":"มีภาพอ้างอิงประกอบ UI เก่า ต้องวาดฉากสะอาดใหม่","landmark":"ชาวนากับควาย","pdfPage":1,"sourceLabel":2},"reviewPurpose":"ทบทวนคำบางคำในฉากใหม่ พร้อมเพิ่มคำและรูปสระ","targetPool":[{"word":"ขา","reading":"ขา","matra":1,"reason":"ไม่มีพยัญชนะเป็นตัวสะกด","difficulty":1,"tts":"ขา","penalty":30,"kind":"target"},{"word":"มา","reading":"มา","matra":1,"reason":"ไม่มีพยัญชนะเป็นตัวสะกด","difficulty":1,"tts":"มา","penalty":75,"kind":"target"},{"word":"ตี","reading":"ตี","matra":1,"reason":"ไม่มีพยัญชนะเป็นตัวสะกด","difficulty":1,"tts":"ตี","penalty":30,"kind":"target"},{"word":"ปี","reading":"ปี","matra":1,"reason":"ไม่มีพยัญชนะเป็นตัวสะกด","difficulty":1,"tts":"ปี","penalty":75,"kind":"target"},{"word":"สี","reading":"สี","matra":1,"reason":"ไม่มีพยัญชนะเป็นตัวสะกด","difficulty":1,"tts":"สี","penalty":30,"kind":"target"},{"word":"ดี","reading":"ดี","matra":1,"reason":"ไม่มีพยัญชนะเป็นตัวสะกด","difficulty":1,"tts":"ดี","penalty":75,"kind":"target"},{"word":"มี","reading":"มี","matra":1,"reason":"ไม่มีพยัญชนะเป็นตัวสะกด","difficulty":1,"tts":"มี","penalty":30,"kind":"target"},{"word":"มือ","reading":"มือ","matra":1,"reason":"ไม่มีตัวสะกด ส่วนท้ายเป็นรูปสระ","difficulty":1,"tts":"มือ","penalty":75,"kind":"target"},{"word":"ถือ","reading":"ถือ","matra":1,"reason":"ไม่มีตัวสะกด ส่วนท้ายเป็นรูปสระ","difficulty":1,"tts":"ถือ","penalty":30,"kind":"target"},{"word":"คือ","reading":"คือ","matra":1,"reason":"ไม่มีตัวสะกด ส่วนท้ายเป็นรูปสระ","difficulty":1,"tts":"คือ","penalty":75,"kind":"target"},{"word":"โต๊ะ","reading":"โต๊ะ","matra":1,"reason":"ไม่มีพยัญชนะเป็นตัวสะกด","difficulty":1,"tts":"โต๊ะ","penalty":30,"kind":"target"},{"word":"ครู","reading":"ครู","matra":1,"reason":"ไม่มีพยัญชนะเป็นตัวสะกด","difficulty":1,"tts":"ครู","penalty":75,"kind":"target"},{"word":"หมู","reading":"หมู","matra":1,"reason":"ไม่มีพยัญชนะเป็นตัวสะกด","difficulty":1,"tts":"หมู","penalty":30,"kind":"target"},{"word":"หนู","reading":"หนู","matra":1,"reason":"ไม่มีพยัญชนะเป็นตัวสะกด","difficulty":1,"tts":"หนู","penalty":75,"kind":"target"},{"word":"ยา","reading":"ยา","matra":1,"reason":"ไม่มีพยัญชนะเป็นตัวสะกด","difficulty":1,"tts":"ยา","penalty":30,"kind":"target"},{"word":"ปลา","reading":"ปลา","matra":1,"reason":"ไม่มีพยัญชนะเป็นตัวสะกด","difficulty":1,"tts":"ปลา","penalty":75,"kind":"target"},{"word":"ปู่","reading":"ปู่","matra":1,"reason":"ไม่มีพยัญชนะเป็นตัวสะกด","difficulty":1,"tts":"ปู่","penalty":30,"kind":"target"},{"word":"ย่า","reading":"ย่า","matra":1,"reason":"ไม่มีพยัญชนะเป็นตัวสะกด","difficulty":1,"tts":"ย่า","penalty":75,"kind":"target"},{"word":"พ่อ","reading":"พ่อ","matra":1,"reason":"ไม่มีพยัญชนะเป็นตัวสะกด","difficulty":1,"tts":"พ่อ","penalty":30,"kind":"target"},{"word":"แม่","reading":"แม่","matra":1,"reason":"ไม่มีพยัญชนะเป็นตัวสะกด","difficulty":1,"tts":"แม่","penalty":75,"kind":"target"},{"word":"ผ้า","reading":"ผ้า","tts":"ผ้า","matra":1,"reason":"ไม่มีพยัญชนะเป็นตัวสะกด","penalty":30,"difficulty":1},{"word":"ฟ้า","reading":"ฟ้า","tts":"ฟ้า","matra":1,"reason":"ไม่มีพยัญชนะเป็นตัวสะกด","penalty":75,"difficulty":1},{"word":"ม้า","reading":"ม้า","tts":"ม้า","matra":1,"reason":"ไม่มีพยัญชนะเป็นตัวสะกด","penalty":30,"difficulty":1},{"word":"ป่า","reading":"ป่า","tts":"ป่า","matra":1,"reason":"ไม่มีพยัญชนะเป็นตัวสะกด","penalty":75,"difficulty":1},{"word":"ปะ","reading":"ปะ","tts":"ปะ","matra":1,"reason":"ไม่มีพยัญชนะเป็นตัวสะกด","penalty":30,"difficulty":1},{"word":"จะ","reading":"จะ","tts":"จะ","matra":1,"reason":"ไม่มีพยัญชนะเป็นตัวสะกด","penalty":75,"difficulty":1},{"word":"คะ","reading":"คะ","tts":"คะ","matra":1,"reason":"ไม่มีพยัญชนะเป็นตัวสะกด","penalty":30,"difficulty":1},{"word":"ค่ะ","reading":"ค่ะ","tts":"ค่ะ","matra":1,"reason":"ไม่มีพยัญชนะเป็นตัวสะกด","penalty":75,"difficulty":1},{"word":"จ้ะ","reading":"จ้ะ","tts":"จ้ะ","matra":1,"reason":"ไม่มีพยัญชนะเป็นตัวสะกด","penalty":30,"difficulty":1},{"word":"นะ","reading":"นะ","tts":"นะ","matra":1,"reason":"ไม่มีพยัญชนะเป็นตัวสะกด","penalty":75,"difficulty":1},{"word":"กะ","reading":"กะ","tts":"กะ","matra":1,"reason":"ไม่มีพยัญชนะเป็นตัวสะกด","penalty":30,"difficulty":1},{"word":"เงาะ","reading":"เงาะ","tts":"เงาะ","matra":1,"reason":"ไม่มีพยัญชนะเป็นตัวสะกด","penalty":75,"difficulty":1},{"word":"เกาะ","reading":"เกาะ","tts":"เกาะ","matra":1,"reason":"ไม่มีพยัญชนะเป็นตัวสะกด","penalty":30,"difficulty":1},{"word":"เบาะ","reading":"เบาะ","tts":"เบาะ","matra":1,"reason":"ไม่มีพยัญชนะเป็นตัวสะกด","penalty":75,"difficulty":1},{"word":"เคาะ","reading":"เคาะ","tts":"เคาะ","matra":1,"reason":"ไม่มีพยัญชนะเป็นตัวสะกด","penalty":30,"difficulty":1},{"word":"ผี","reading":"ผี","tts":"ผี","matra":1,"reason":"ไม่มีพยัญชนะเป็นตัวสะกด","penalty":75,"difficulty":1}],"decoyPool":[{"word":"ลิง","reading":"ลิง","matra":2,"reason":"มีเสียง ง สะกดท้าย","difficulty":1,"tts":"ลิง","penalty":75,"kind":"decoy"},{"word":"ทาง","reading":"ทาง","matra":2,"reason":"มีเสียง ง สะกดท้าย","difficulty":1,"tts":"ทาง","penalty":30,"kind":"decoy"},{"word":"นาง","reading":"นาง","matra":2,"reason":"มีเสียง ง สะกดท้าย","difficulty":1,"tts":"นาง","penalty":75,"kind":"decoy"},{"word":"บาง","reading":"บาง","matra":2,"reason":"มีเสียง ง สะกดท้าย","difficulty":1,"tts":"บาง","penalty":30,"kind":"decoy"},{"word":"วาง","reading":"วาง","matra":2,"reason":"มีเสียง ง สะกดท้าย","difficulty":1,"tts":"วาง","penalty":75,"kind":"decoy"},{"word":"หาง","reading":"หาง","matra":2,"reason":"มีเสียง ง สะกดท้าย","difficulty":1,"tts":"หาง","penalty":30,"kind":"decoy"},{"word":"ช้าง","reading":"ช้าง","matra":2,"reason":"มีเสียง ง สะกดท้าย","difficulty":1,"tts":"ช้าง","penalty":75,"kind":"decoy"},{"word":"กวาง","reading":"กวาง","matra":2,"reason":"มีเสียง ง สะกดท้าย","difficulty":1,"tts":"กวาง","penalty":30,"kind":"decoy"},{"word":"ถุง","reading":"ถุง","tts":"ถุง","matra":2,"reason":"มีเสียง ง สะกด","penalty":30,"difficulty":1},{"word":"กุ้ง","reading":"กุ้ง","tts":"กุ้ง","matra":2,"reason":"มีเสียง ง สะกด","penalty":75,"difficulty":1},{"word":"นม","reading":"นม","tts":"นม","matra":3,"reason":"มีเสียง ม สะกด","penalty":30,"difficulty":1},{"word":"ส้ม","reading":"ส้ม","tts":"ส้ม","matra":3,"reason":"มีเสียง ม สะกด","penalty":75,"difficulty":1},{"word":"ถ้วย","reading":"ถ้วย","tts":"ถ้วย","matra":4,"reason":"มีเสียง ย สะกด","penalty":30,"difficulty":1},{"word":"สวย","reading":"สวย","tts":"สวย","matra":4,"reason":"มีเสียง ย สะกด","penalty":75,"difficulty":1},{"word":"ข้าว","reading":"ข้าว","tts":"ข้าว","matra":5,"reason":"มีเสียง ว สะกด","penalty":30,"difficulty":1},{"word":"แก้ว","reading":"แก้ว","tts":"แก้ว","matra":5,"reason":"มีเสียง ว สะกด","penalty":75,"difficulty":1},{"word":"ผัก","reading":"ผัก","tts":"ผัก","matra":6,"reason":"มีเสียง ก สะกด","penalty":30,"difficulty":1},{"word":"ปาก","reading":"ปาก","tts":"ปาก","matra":6,"reason":"มีเสียง ก สะกด","penalty":75,"difficulty":1},{"word":"จด","reading":"จด","tts":"จด","matra":7,"reason":"มีเสียง ด สะกด","penalty":30,"difficulty":1},{"word":"ปิด","reading":"ปิด","tts":"ปิด","matra":7,"reason":"มีเสียง ด สะกด","penalty":75,"difficulty":1},{"word":"ฝน","reading":"ฝน","tts":"ฝน","matra":8,"reason":"มีเสียง น สะกด","penalty":30,"difficulty":1},{"word":"บ้าน","reading":"บ้าน","tts":"บ้าน","matra":8,"reason":"มีเสียง น สะกด","penalty":75,"difficulty":1},{"word":"ซับ","reading":"ซับ","tts":"ซับ","matra":9,"reason":"มีเสียง บ สะกด","penalty":30,"difficulty":1},{"word":"จบ","reading":"จบ","tts":"จบ","matra":9,"reason":"มีเสียง บ สะกด","penalty":75,"difficulty":1}]},{"id":3,"season":1,"local":3,"name":"ทางนาริมหมู่บ้าน","theme":"rice","time":"sunset","targets":[{"word":"คือ","reading":"คือ","matra":1,"reason":"ไม่มีตัวสะกด ส่วนท้ายเป็นรูปสระ","difficulty":1,"tts":"คือ","penalty":30,"kind":"target"},{"word":"โต๊ะ","reading":"โต๊ะ","matra":1,"reason":"ไม่มีพยัญชนะเป็นตัวสะกด","difficulty":1,"tts":"โต๊ะ","penalty":75,"kind":"target"},{"word":"ครู","reading":"ครู","matra":1,"reason":"ไม่มีพยัญชนะเป็นตัวสะกด","difficulty":1,"tts":"ครู","penalty":30,"kind":"target"},{"word":"หมู","reading":"หมู","matra":1,"reason":"ไม่มีพยัญชนะเป็นตัวสะกด","difficulty":1,"tts":"หมู","penalty":75,"kind":"target"},{"word":"หนู","reading":"หนู","matra":1,"reason":"ไม่มีพยัญชนะเป็นตัวสะกด","difficulty":1,"tts":"หนู","penalty":30,"kind":"target"},{"word":"ยา","reading":"ยา","matra":1,"reason":"ไม่มีพยัญชนะเป็นตัวสะกด","difficulty":1,"tts":"ยา","penalty":75,"kind":"target"},{"word":"ปลา","reading":"ปลา","matra":1,"reason":"ไม่มีพยัญชนะเป็นตัวสะกด","difficulty":1,"tts":"ปลา","penalty":30,"kind":"target"},{"word":"ปู่","reading":"ปู่","matra":1,"reason":"ไม่มีพยัญชนะเป็นตัวสะกด","difficulty":1,"tts":"ปู่","penalty":75,"kind":"target"},{"word":"ย่า","reading":"ย่า","matra":1,"reason":"ไม่มีพยัญชนะเป็นตัวสะกด","difficulty":1,"tts":"ย่า","penalty":30,"kind":"target"},{"word":"พ่อ","reading":"พ่อ","matra":1,"reason":"ไม่มีพยัญชนะเป็นตัวสะกด","difficulty":1,"tts":"พ่อ","penalty":75,"kind":"target"},{"word":"แม่","reading":"แม่","matra":1,"reason":"ไม่มีพยัญชนะเป็นตัวสะกด","difficulty":1,"tts":"แม่","penalty":30,"kind":"target"},{"word":"พี่","reading":"พี่","matra":1,"reason":"ไม่มีพยัญชนะเป็นตัวสะกด","difficulty":1,"tts":"พี่","penalty":75,"kind":"target"},{"word":"น้า","reading":"น้า","matra":1,"reason":"ไม่มีพยัญชนะเป็นตัวสะกด","difficulty":1,"tts":"น้า","penalty":30,"kind":"target"},{"word":"ป้า","reading":"ป้า","matra":1,"reason":"ไม่มีพยัญชนะเป็นตัวสะกด","difficulty":1,"tts":"ป้า","penalty":75,"kind":"target"},{"word":"อา","reading":"อา","matra":1,"reason":"ไม่มีพยัญชนะเป็นตัวสะกด","difficulty":1,"tts":"อา","penalty":30,"kind":"target"},{"word":"ลา","reading":"ลา","matra":1,"reason":"ไม่มีพยัญชนะเป็นตัวสะกด","difficulty":1,"tts":"ลา","penalty":75,"kind":"target"},{"word":"หา","reading":"หา","matra":1,"reason":"ไม่มีพยัญชนะเป็นตัวสะกด","difficulty":1,"tts":"หา","penalty":30,"kind":"target"},{"word":"ตู้","reading":"ตู้","matra":1,"reason":"ไม่มีพยัญชนะเป็นตัวสะกด","difficulty":1,"tts":"ตู้","penalty":75,"kind":"target"},{"word":"สี่","reading":"สี่","matra":1,"reason":"ไม่มีพยัญชนะเป็นตัวสะกด","difficulty":1,"tts":"สี่","penalty":30,"kind":"target"},{"word":"ห้า","reading":"ห้า","matra":1,"reason":"ไม่มีพยัญชนะเป็นตัวสะกด","difficulty":1,"tts":"ห้า","penalty":75,"kind":"target"}],"decoys":[{"word":"นาง","reading":"นาง","matra":2,"reason":"มีเสียง ง สะกดท้าย","difficulty":1,"tts":"นาง","penalty":75,"kind":"decoy"},{"word":"บาง","reading":"บาง","matra":2,"reason":"มีเสียง ง สะกดท้าย","difficulty":1,"tts":"บาง","penalty":30,"kind":"decoy"},{"word":"วาง","reading":"วาง","matra":2,"reason":"มีเสียง ง สะกดท้าย","difficulty":1,"tts":"วาง","penalty":75,"kind":"decoy"},{"word":"หาง","reading":"หาง","matra":2,"reason":"มีเสียง ง สะกดท้าย","difficulty":1,"tts":"หาง","penalty":30,"kind":"decoy"},{"word":"ช้าง","reading":"ช้าง","matra":2,"reason":"มีเสียง ง สะกดท้าย","difficulty":1,"tts":"ช้าง","penalty":75,"kind":"decoy"},{"word":"กวาง","reading":"กวาง","matra":2,"reason":"มีเสียง ง สะกดท้าย","difficulty":1,"tts":"กวาง","penalty":30,"kind":"decoy"},{"word":"ข้าง","reading":"ข้าง","matra":2,"reason":"มีเสียง ง สะกดท้าย","difficulty":1,"tts":"ข้าง","penalty":75,"kind":"decoy"},{"word":"ล้าง","reading":"ล้าง","matra":2,"reason":"มีเสียง ง สะกดท้าย","difficulty":1,"tts":"ล้าง","penalty":30,"kind":"decoy"}],"reviewed":false,"art":{"source":"/assets/reference/page-1-image-3.jpeg","status":"มีภาพอ้างอิงประกอบ UI เก่า ต้องวาดฉากสะอาดใหม่","landmark":"ทางนาริมหมู่บ้าน","pdfPage":1,"sourceLabel":3},"reviewPurpose":"ทบทวนคำบางคำในฉากใหม่ พร้อมเพิ่มคำและรูปสระ","targetPool":[{"word":"คือ","reading":"คือ","matra":1,"reason":"ไม่มีตัวสะกด ส่วนท้ายเป็นรูปสระ","difficulty":1,"tts":"คือ","penalty":30,"kind":"target"},{"word":"โต๊ะ","reading":"โต๊ะ","matra":1,"reason":"ไม่มีพยัญชนะเป็นตัวสะกด","difficulty":1,"tts":"โต๊ะ","penalty":75,"kind":"target"},{"word":"ครู","reading":"ครู","matra":1,"reason":"ไม่มีพยัญชนะเป็นตัวสะกด","difficulty":1,"tts":"ครู","penalty":30,"kind":"target"},{"word":"หมู","reading":"หมู","matra":1,"reason":"ไม่มีพยัญชนะเป็นตัวสะกด","difficulty":1,"tts":"หมู","penalty":75,"kind":"target"},{"word":"หนู","reading":"หนู","matra":1,"reason":"ไม่มีพยัญชนะเป็นตัวสะกด","difficulty":1,"tts":"หนู","penalty":30,"kind":"target"},{"word":"ยา","reading":"ยา","matra":1,"reason":"ไม่มีพยัญชนะเป็นตัวสะกด","difficulty":1,"tts":"ยา","penalty":75,"kind":"target"},{"word":"ปลา","reading":"ปลา","matra":1,"reason":"ไม่มีพยัญชนะเป็นตัวสะกด","difficulty":1,"tts":"ปลา","penalty":30,"kind":"target"},{"word":"ปู่","reading":"ปู่","matra":1,"reason":"ไม่มีพยัญชนะเป็นตัวสะกด","difficulty":1,"tts":"ปู่","penalty":75,"kind":"target"},{"word":"ย่า","reading":"ย่า","matra":1,"reason":"ไม่มีพยัญชนะเป็นตัวสะกด","difficulty":1,"tts":"ย่า","penalty":30,"kind":"target"},{"word":"พ่อ","reading":"พ่อ","matra":1,"reason":"ไม่มีพยัญชนะเป็นตัวสะกด","difficulty":1,"tts":"พ่อ","penalty":75,"kind":"target"},{"word":"แม่","reading":"แม่","matra":1,"reason":"ไม่มีพยัญชนะเป็นตัวสะกด","difficulty":1,"tts":"แม่","penalty":30,"kind":"target"},{"word":"พี่","reading":"พี่","matra":1,"reason":"ไม่มีพยัญชนะเป็นตัวสะกด","difficulty":1,"tts":"พี่","penalty":75,"kind":"target"},{"word":"น้า","reading":"น้า","matra":1,"reason":"ไม่มีพยัญชนะเป็นตัวสะกด","difficulty":1,"tts":"น้า","penalty":30,"kind":"target"},{"word":"ป้า","reading":"ป้า","matra":1,"reason":"ไม่มีพยัญชนะเป็นตัวสะกด","difficulty":1,"tts":"ป้า","penalty":75,"kind":"target"},{"word":"อา","reading":"อา","matra":1,"reason":"ไม่มีพยัญชนะเป็นตัวสะกด","difficulty":1,"tts":"อา","penalty":30,"kind":"target"},{"word":"ลา","reading":"ลา","matra":1,"reason":"ไม่มีพยัญชนะเป็นตัวสะกด","difficulty":1,"tts":"ลา","penalty":75,"kind":"target"},{"word":"หา","reading":"หา","matra":1,"reason":"ไม่มีพยัญชนะเป็นตัวสะกด","difficulty":1,"tts":"หา","penalty":30,"kind":"target"},{"word":"ตู้","reading":"ตู้","matra":1,"reason":"ไม่มีพยัญชนะเป็นตัวสะกด","difficulty":1,"tts":"ตู้","penalty":75,"kind":"target"},{"word":"สี่","reading":"สี่","matra":1,"reason":"ไม่มีพยัญชนะเป็นตัวสะกด","difficulty":1,"tts":"สี่","penalty":30,"kind":"target"},{"word":"ห้า","reading":"ห้า","matra":1,"reason":"ไม่มีพยัญชนะเป็นตัวสะกด","difficulty":1,"tts":"ห้า","penalty":75,"kind":"target"},{"word":"รื้อ","reading":"รื้อ","tts":"รื้อ","matra":1,"reason":"ไม่มีพยัญชนะเป็นตัวสะกด","penalty":30,"difficulty":1},{"word":"ซื้อ","reading":"ซื้อ","tts":"ซื้อ","matra":1,"reason":"ไม่มีพยัญชนะเป็นตัวสะกด","penalty":75,"difficulty":1},{"word":"ดื้อ","reading":"ดื้อ","tts":"ดื้อ","matra":1,"reason":"ไม่มีพยัญชนะเป็นตัวสะกด","penalty":30,"difficulty":1},{"word":"ซื่อ","reading":"ซื่อ","tts":"ซื่อ","matra":1,"reason":"ไม่มีพยัญชนะเป็นตัวสะกด","penalty":75,"difficulty":1},{"word":"ตื้อ","reading":"ตื้อ","tts":"ตื้อ","matra":1,"reason":"ไม่มีพยัญชนะเป็นตัวสะกด","penalty":30,"difficulty":1},{"word":"ชื่อ","reading":"ชื่อ","tts":"ชื่อ","matra":1,"reason":"ไม่มีพยัญชนะเป็นตัวสะกด","penalty":75,"difficulty":1},{"word":"สื่อ","reading":"สื่อ","tts":"สื่อ","matra":1,"reason":"ไม่มีพยัญชนะเป็นตัวสะกด","penalty":30,"difficulty":1},{"word":"เสื้อ","reading":"เสื้อ","tts":"เสื้อ","matra":1,"reason":"ไม่มีพยัญชนะเป็นตัวสะกด","penalty":75,"difficulty":1},{"word":"เสือ","reading":"เสือ","tts":"เสือ","matra":1,"reason":"ไม่มีพยัญชนะเป็นตัวสะกด","penalty":30,"difficulty":1},{"word":"เรือ","reading":"เรือ","tts":"เรือ","matra":1,"reason":"ไม่มีพยัญชนะเป็นตัวสะกด","penalty":75,"difficulty":1},{"word":"เกลือ","reading":"เกลือ","tts":"เกลือ","matra":1,"reason":"ไม่มีพยัญชนะเป็นตัวสะกด","penalty":30,"difficulty":1},{"word":"เยอะ","reading":"เยอะ","tts":"เยอะ","matra":1,"reason":"ไม่มีพยัญชนะเป็นตัวสะกด","penalty":75,"difficulty":1},{"word":"แยะ","reading":"แยะ","tts":"แยะ","matra":1,"reason":"ไม่มีพยัญชนะเป็นตัวสะกด","penalty":30,"difficulty":1},{"word":"แปะ","reading":"แปะ","tts":"แปะ","matra":1,"reason":"ไม่มีพยัญชนะเป็นตัวสะกด","penalty":75,"difficulty":1},{"word":"เจาะ","reading":"เจาะ","tts":"เจาะ","matra":1,"reason":"ไม่มีพยัญชนะเป็นตัวสะกด","penalty":30,"difficulty":1},{"word":"ชี้","reading":"ชี้","tts":"ชี้","matra":1,"reason":"ไม่มีพยัญชนะเป็นตัวสะกด","penalty":75,"difficulty":1}],"decoyPool":[{"word":"นาง","reading":"นาง","matra":2,"reason":"มีเสียง ง สะกดท้าย","difficulty":1,"tts":"นาง","penalty":75,"kind":"decoy"},{"word":"บาง","reading":"บาง","matra":2,"reason":"มีเสียง ง สะกดท้าย","difficulty":1,"tts":"บาง","penalty":30,"kind":"decoy"},{"word":"วาง","reading":"วาง","matra":2,"reason":"มีเสียง ง สะกดท้าย","difficulty":1,"tts":"วาง","penalty":75,"kind":"decoy"},{"word":"หาง","reading":"หาง","matra":2,"reason":"มีเสียง ง สะกดท้าย","difficulty":1,"tts":"หาง","penalty":30,"kind":"decoy"},{"word":"ช้าง","reading":"ช้าง","matra":2,"reason":"มีเสียง ง สะกดท้าย","difficulty":1,"tts":"ช้าง","penalty":75,"kind":"decoy"},{"word":"กวาง","reading":"กวาง","matra":2,"reason":"มีเสียง ง สะกดท้าย","difficulty":1,"tts":"กวาง","penalty":30,"kind":"decoy"},{"word":"ข้าง","reading":"ข้าง","matra":2,"reason":"มีเสียง ง สะกดท้าย","difficulty":1,"tts":"ข้าง","penalty":75,"kind":"decoy"},{"word":"ล้าง","reading":"ล้าง","matra":2,"reason":"มีเสียง ง สะกดท้าย","difficulty":1,"tts":"ล้าง","penalty":30,"kind":"decoy"},{"word":"กรง","reading":"กรง","tts":"กรง","matra":2,"reason":"มีเสียง ง สะกด","penalty":75,"difficulty":1},{"word":"กาง","reading":"กาง","tts":"กาง","matra":2,"reason":"มีเสียง ง สะกด","penalty":30,"difficulty":1},{"word":"ต้ม","reading":"ต้ม","tts":"ต้ม","matra":3,"reason":"มีเสียง ม สะกด","penalty":75,"difficulty":1},{"word":"ยิ้ม","reading":"ยิ้ม","tts":"ยิ้ม","matra":3,"reason":"มีเสียง ม สะกด","penalty":30,"difficulty":1},{"word":"คุย","reading":"คุย","tts":"คุย","matra":4,"reason":"มีเสียง ย สะกด","penalty":75,"difficulty":1},{"word":"ปุย","reading":"ปุย","tts":"ปุย","matra":4,"reason":"มีเสียง ย สะกด","penalty":30,"difficulty":1},{"word":"เร็ว","reading":"เร็ว","tts":"เร็ว","matra":5,"reason":"มีเสียง ว สะกด","penalty":75,"difficulty":1},{"word":"เขียว","reading":"เขียว","tts":"เขียว","matra":5,"reason":"มีเสียง ว สะกด","penalty":30,"difficulty":1},{"word":"ปีก","reading":"ปีก","tts":"ปีก","matra":6,"reason":"มีเสียง ก สะกด","penalty":75,"difficulty":1},{"word":"มุก","reading":"มุก","tts":"มุก","matra":6,"reason":"มีเสียง ก สะกด","penalty":30,"difficulty":1},{"word":"วาด","reading":"วาด","tts":"วาด","matra":7,"reason":"มีเสียง ด สะกด","penalty":75,"difficulty":1},{"word":"กอด","reading":"กอด","tts":"กอด","matra":7,"reason":"มีเสียง ด สะกด","penalty":30,"difficulty":1},{"word":"นอน","reading":"นอน","tts":"นอน","matra":8,"reason":"มีเสียง น สะกด","penalty":75,"difficulty":1},{"word":"เดิน","reading":"เดิน","tts":"เดิน","matra":8,"reason":"มีเสียง น สะกด","penalty":30,"difficulty":1},{"word":"ตบ","reading":"ตบ","tts":"ตบ","matra":9,"reason":"มีเสียง บ สะกด","penalty":75,"difficulty":1},{"word":"คาบ","reading":"คาบ","tts":"คาบ","matra":9,"reason":"มีเสียง บ สะกด","penalty":30,"difficulty":1}]},{"id":4,"season":1,"local":4,"name":"ยุ้งข้าวปลายทุ่ง","theme":"rice","time":"sunset","targets":[{"word":"พ่อ","reading":"พ่อ","matra":1,"reason":"ไม่มีพยัญชนะเป็นตัวสะกด","difficulty":1,"tts":"พ่อ","penalty":30,"kind":"target"},{"word":"แม่","reading":"แม่","matra":1,"reason":"ไม่มีพยัญชนะเป็นตัวสะกด","difficulty":1,"tts":"แม่","penalty":75,"kind":"target"},{"word":"พี่","reading":"พี่","matra":1,"reason":"ไม่มีพยัญชนะเป็นตัวสะกด","difficulty":1,"tts":"พี่","penalty":30,"kind":"target"},{"word":"น้า","reading":"น้า","matra":1,"reason":"ไม่มีพยัญชนะเป็นตัวสะกด","difficulty":1,"tts":"น้า","penalty":75,"kind":"target"},{"word":"ป้า","reading":"ป้า","matra":1,"reason":"ไม่มีพยัญชนะเป็นตัวสะกด","difficulty":1,"tts":"ป้า","penalty":30,"kind":"target"},{"word":"อา","reading":"อา","matra":1,"reason":"ไม่มีพยัญชนะเป็นตัวสะกด","difficulty":1,"tts":"อา","penalty":75,"kind":"target"},{"word":"ลา","reading":"ลา","matra":1,"reason":"ไม่มีพยัญชนะเป็นตัวสะกด","difficulty":1,"tts":"ลา","penalty":30,"kind":"target"},{"word":"หา","reading":"หา","matra":1,"reason":"ไม่มีพยัญชนะเป็นตัวสะกด","difficulty":1,"tts":"หา","penalty":75,"kind":"target"},{"word":"ตู้","reading":"ตู้","matra":1,"reason":"ไม่มีพยัญชนะเป็นตัวสะกด","difficulty":1,"tts":"ตู้","penalty":30,"kind":"target"},{"word":"สี่","reading":"สี่","matra":1,"reason":"ไม่มีพยัญชนะเป็นตัวสะกด","difficulty":1,"tts":"สี่","penalty":75,"kind":"target"},{"word":"ห้า","reading":"ห้า","matra":1,"reason":"ไม่มีพยัญชนะเป็นตัวสะกด","difficulty":1,"tts":"ห้า","penalty":30,"kind":"target"},{"word":"โถ","reading":"โถ","matra":1,"reason":"ไม่มีพยัญชนะเป็นตัวสะกด","difficulty":1,"tts":"โถ","penalty":75,"kind":"target"},{"word":"แกะ","reading":"แกะ","matra":1,"reason":"ไม่มีพยัญชนะเป็นตัวสะกด","difficulty":1,"tts":"แกะ","penalty":30,"kind":"target"},{"word":"แพะ","reading":"แพะ","matra":1,"reason":"ไม่มีพยัญชนะเป็นตัวสะกด","difficulty":1,"tts":"แพะ","penalty":75,"kind":"target"},{"word":"แตะ","reading":"แตะ","matra":1,"reason":"ไม่มีพยัญชนะเป็นตัวสะกด","difficulty":1,"tts":"แตะ","penalty":30,"kind":"target"},{"word":"แคะ","reading":"แคะ","matra":1,"reason":"ไม่มีพยัญชนะเป็นตัวสะกด","difficulty":1,"tts":"แคะ","penalty":75,"kind":"target"},{"word":"แทะ","reading":"แทะ","matra":1,"reason":"ไม่มีพยัญชนะเป็นตัวสะกด","difficulty":1,"tts":"แทะ","penalty":30,"kind":"target"},{"word":"แวะ","reading":"แวะ","matra":1,"reason":"ไม่มีพยัญชนะเป็นตัวสะกด","difficulty":1,"tts":"แวะ","penalty":75,"kind":"target"},{"word":"เละ","reading":"เละ","matra":1,"reason":"ไม่มีพยัญชนะเป็นตัวสะกด","difficulty":1,"tts":"เละ","penalty":30,"kind":"target"},{"word":"เตะ","reading":"เตะ","matra":1,"reason":"ไม่มีพยัญชนะเป็นตัวสะกด","difficulty":1,"tts":"เตะ","penalty":75,"kind":"target"}],"decoys":[{"word":"วาง","reading":"วาง","matra":2,"reason":"มีเสียง ง สะกดท้าย","difficulty":1,"tts":"วาง","penalty":75,"kind":"decoy"},{"word":"หาง","reading":"หาง","matra":2,"reason":"มีเสียง ง สะกดท้าย","difficulty":1,"tts":"หาง","penalty":30,"kind":"decoy"},{"word":"ช้าง","reading":"ช้าง","matra":2,"reason":"มีเสียง ง สะกดท้าย","difficulty":1,"tts":"ช้าง","penalty":75,"kind":"decoy"},{"word":"กวาง","reading":"กวาง","matra":2,"reason":"มีเสียง ง สะกดท้าย","difficulty":1,"tts":"กวาง","penalty":30,"kind":"decoy"},{"word":"ข้าง","reading":"ข้าง","matra":2,"reason":"มีเสียง ง สะกดท้าย","difficulty":1,"tts":"ข้าง","penalty":75,"kind":"decoy"},{"word":"ล้าง","reading":"ล้าง","matra":2,"reason":"มีเสียง ง สะกดท้าย","difficulty":1,"tts":"ล้าง","penalty":30,"kind":"decoy"},{"word":"ย่าง","reading":"ย่าง","matra":2,"reason":"มีเสียง ง สะกดท้าย","difficulty":1,"tts":"ย่าง","penalty":75,"kind":"decoy"},{"word":"อ่าง","reading":"อ่าง","matra":2,"reason":"มีเสียง ง สะกดท้าย","difficulty":1,"tts":"อ่าง","penalty":30,"kind":"decoy"}],"reviewed":false,"art":{"source":"/assets/reference/page-1-image-4.jpeg","status":"มีภาพอ้างอิงประกอบ UI เก่า ต้องวาดฉากสะอาดใหม่","landmark":"ยุ้งข้าวปลายทุ่ง","pdfPage":1,"sourceLabel":4},"reviewPurpose":"ทบทวนคำบางคำในฉากใหม่ พร้อมเพิ่มคำและรูปสระ","targetPool":[{"word":"พ่อ","reading":"พ่อ","matra":1,"reason":"ไม่มีพยัญชนะเป็นตัวสะกด","difficulty":1,"tts":"พ่อ","penalty":30,"kind":"target"},{"word":"แม่","reading":"แม่","matra":1,"reason":"ไม่มีพยัญชนะเป็นตัวสะกด","difficulty":1,"tts":"แม่","penalty":75,"kind":"target"},{"word":"พี่","reading":"พี่","matra":1,"reason":"ไม่มีพยัญชนะเป็นตัวสะกด","difficulty":1,"tts":"พี่","penalty":30,"kind":"target"},{"word":"น้า","reading":"น้า","matra":1,"reason":"ไม่มีพยัญชนะเป็นตัวสะกด","difficulty":1,"tts":"น้า","penalty":75,"kind":"target"},{"word":"ป้า","reading":"ป้า","matra":1,"reason":"ไม่มีพยัญชนะเป็นตัวสะกด","difficulty":1,"tts":"ป้า","penalty":30,"kind":"target"},{"word":"อา","reading":"อา","matra":1,"reason":"ไม่มีพยัญชนะเป็นตัวสะกด","difficulty":1,"tts":"อา","penalty":75,"kind":"target"},{"word":"ลา","reading":"ลา","matra":1,"reason":"ไม่มีพยัญชนะเป็นตัวสะกด","difficulty":1,"tts":"ลา","penalty":30,"kind":"target"},{"word":"หา","reading":"หา","matra":1,"reason":"ไม่มีพยัญชนะเป็นตัวสะกด","difficulty":1,"tts":"หา","penalty":75,"kind":"target"},{"word":"ตู้","reading":"ตู้","matra":1,"reason":"ไม่มีพยัญชนะเป็นตัวสะกด","difficulty":1,"tts":"ตู้","penalty":30,"kind":"target"},{"word":"สี่","reading":"สี่","matra":1,"reason":"ไม่มีพยัญชนะเป็นตัวสะกด","difficulty":1,"tts":"สี่","penalty":75,"kind":"target"},{"word":"ห้า","reading":"ห้า","matra":1,"reason":"ไม่มีพยัญชนะเป็นตัวสะกด","difficulty":1,"tts":"ห้า","penalty":30,"kind":"target"},{"word":"โถ","reading":"โถ","matra":1,"reason":"ไม่มีพยัญชนะเป็นตัวสะกด","difficulty":1,"tts":"โถ","penalty":75,"kind":"target"},{"word":"แกะ","reading":"แกะ","matra":1,"reason":"ไม่มีพยัญชนะเป็นตัวสะกด","difficulty":1,"tts":"แกะ","penalty":30,"kind":"target"},{"word":"แพะ","reading":"แพะ","matra":1,"reason":"ไม่มีพยัญชนะเป็นตัวสะกด","difficulty":1,"tts":"แพะ","penalty":75,"kind":"target"},{"word":"แตะ","reading":"แตะ","matra":1,"reason":"ไม่มีพยัญชนะเป็นตัวสะกด","difficulty":1,"tts":"แตะ","penalty":30,"kind":"target"},{"word":"แคะ","reading":"แคะ","matra":1,"reason":"ไม่มีพยัญชนะเป็นตัวสะกด","difficulty":1,"tts":"แคะ","penalty":75,"kind":"target"},{"word":"แทะ","reading":"แทะ","matra":1,"reason":"ไม่มีพยัญชนะเป็นตัวสะกด","difficulty":1,"tts":"แทะ","penalty":30,"kind":"target"},{"word":"แวะ","reading":"แวะ","matra":1,"reason":"ไม่มีพยัญชนะเป็นตัวสะกด","difficulty":1,"tts":"แวะ","penalty":75,"kind":"target"},{"word":"เละ","reading":"เละ","matra":1,"reason":"ไม่มีพยัญชนะเป็นตัวสะกด","difficulty":1,"tts":"เละ","penalty":30,"kind":"target"},{"word":"เตะ","reading":"เตะ","matra":1,"reason":"ไม่มีพยัญชนะเป็นตัวสะกด","difficulty":1,"tts":"เตะ","penalty":75,"kind":"target"},{"word":"เถอะ","reading":"เถอะ","tts":"เถอะ","matra":1,"reason":"ไม่มีพยัญชนะเป็นตัวสะกด","penalty":30,"difficulty":1},{"word":"เลอะ","reading":"เลอะ","tts":"เลอะ","matra":1,"reason":"ไม่มีพยัญชนะเป็นตัวสะกด","penalty":75,"difficulty":1},{"word":"เทอะ","reading":"เทอะ","tts":"เทอะ","matra":1,"reason":"ไม่มีพยัญชนะเป็นตัวสะกด","penalty":30,"difficulty":1},{"word":"เปรอะ","reading":"เปรอะ","tts":"เปรอะ","matra":1,"reason":"ไม่มีพยัญชนะเป็นตัวสะกด","penalty":75,"difficulty":1},{"word":"พอ","reading":"พอ","tts":"พอ","matra":1,"reason":"ไม่มีพยัญชนะเป็นตัวสะกด","penalty":30,"difficulty":1},{"word":"คอ","reading":"คอ","tts":"คอ","matra":1,"reason":"ไม่มีพยัญชนะเป็นตัวสะกด","penalty":75,"difficulty":1},{"word":"บ่อ","reading":"บ่อ","tts":"บ่อ","matra":1,"reason":"ไม่มีพยัญชนะเป็นตัวสะกด","penalty":30,"difficulty":1},{"word":"หม้อ","reading":"หม้อ","tts":"หม้อ","matra":1,"reason":"ไม่มีพยัญชนะเป็นตัวสะกด","penalty":75,"difficulty":1},{"word":"ล้อ","reading":"ล้อ","tts":"ล้อ","matra":1,"reason":"ไม่มีพยัญชนะเป็นตัวสะกด","penalty":30,"difficulty":1},{"word":"ปะ","reading":"ปะ","tts":"ปะ","matra":1,"reason":"ไม่มีพยัญชนะเป็นตัวสะกด","penalty":75,"difficulty":1},{"word":"เกาะ","reading":"เกาะ","tts":"เกาะ","matra":1,"reason":"ไม่มีพยัญชนะเป็นตัวสะกด","penalty":30,"difficulty":1},{"word":"เบาะ","reading":"เบาะ","tts":"เบาะ","matra":1,"reason":"ไม่มีพยัญชนะเป็นตัวสะกด","penalty":75,"difficulty":1},{"word":"เคาะ","reading":"เคาะ","tts":"เคาะ","matra":1,"reason":"ไม่มีพยัญชนะเป็นตัวสะกด","penalty":30,"difficulty":1},{"word":"รื้อ","reading":"รื้อ","tts":"รื้อ","matra":1,"reason":"ไม่มีพยัญชนะเป็นตัวสะกด","penalty":75,"difficulty":1},{"word":"ซื้อ","reading":"ซื้อ","tts":"ซื้อ","matra":1,"reason":"ไม่มีพยัญชนะเป็นตัวสะกด","penalty":30,"difficulty":1},{"word":"ดื้อ","reading":"ดื้อ","tts":"ดื้อ","matra":1,"reason":"ไม่มีพยัญชนะเป็นตัวสะกด","penalty":75,"difficulty":1}],"decoyPool":[{"word":"วาง","reading":"วาง","matra":2,"reason":"มีเสียง ง สะกดท้าย","difficulty":1,"tts":"วาง","penalty":75,"kind":"decoy"},{"word":"หาง","reading":"หาง","matra":2,"reason":"มีเสียง ง สะกดท้าย","difficulty":1,"tts":"หาง","penalty":30,"kind":"decoy"},{"word":"ช้าง","reading":"ช้าง","matra":2,"reason":"มีเสียง ง สะกดท้าย","difficulty":1,"tts":"ช้าง","penalty":75,"kind":"decoy"},{"word":"กวาง","reading":"กวาง","matra":2,"reason":"มีเสียง ง สะกดท้าย","difficulty":1,"tts":"กวาง","penalty":30,"kind":"decoy"},{"word":"ข้าง","reading":"ข้าง","matra":2,"reason":"มีเสียง ง สะกดท้าย","difficulty":1,"tts":"ข้าง","penalty":75,"kind":"decoy"},{"word":"ล้าง","reading":"ล้าง","matra":2,"reason":"มีเสียง ง สะกดท้าย","difficulty":1,"tts":"ล้าง","penalty":30,"kind":"decoy"},{"word":"ย่าง","reading":"ย่าง","matra":2,"reason":"มีเสียง ง สะกดท้าย","difficulty":1,"tts":"ย่าง","penalty":75,"kind":"decoy"},{"word":"อ่าง","reading":"อ่าง","matra":2,"reason":"มีเสียง ง สะกดท้าย","difficulty":1,"tts":"อ่าง","penalty":30,"kind":"decoy"},{"word":"คาง","reading":"คาง","tts":"คาง","matra":2,"reason":"มีเสียง ง สะกด","penalty":30,"difficulty":1},{"word":"งง","reading":"งง","tts":"งง","matra":2,"reason":"มีเสียง ง สะกด","penalty":75,"difficulty":1},{"word":"หอม","reading":"หอม","tts":"หอม","matra":3,"reason":"มีเสียง ม สะกด","penalty":30,"difficulty":1},{"word":"ชิม","reading":"ชิม","tts":"ชิม","matra":3,"reason":"มีเสียง ม สะกด","penalty":75,"difficulty":1},{"word":"น้อย","reading":"น้อย","tts":"น้อย","matra":4,"reason":"มีเสียง ย สะกด","penalty":30,"difficulty":1},{"word":"ช่วย","reading":"ช่วย","tts":"ช่วย","matra":4,"reason":"มีเสียง ย สะกด","penalty":75,"difficulty":1},{"word":"นิ้ว","reading":"นิ้ว","tts":"นิ้ว","matra":5,"reason":"มีเสียง ว สะกด","penalty":30,"difficulty":1},{"word":"หิว","reading":"หิว","tts":"หิว","matra":5,"reason":"มีเสียง ว สะกด","penalty":75,"difficulty":1},{"word":"ชก","reading":"ชก","tts":"ชก","matra":6,"reason":"มีเสียง ก สะกด","penalty":30,"difficulty":1},{"word":"เด็ก","reading":"เด็ก","tts":"เด็ก","matra":6,"reason":"มีเสียง ก สะกด","penalty":75,"difficulty":1},{"word":"หยุด","reading":"หยุด","tts":"หยุด","matra":7,"reason":"มีเสียง ด สะกด","penalty":30,"difficulty":1},{"word":"ปูด","reading":"ปูด","tts":"ปูด","matra":7,"reason":"มีเสียง ด สะกด","penalty":75,"difficulty":1},{"word":"กิน","reading":"กิน","tts":"กิน","matra":8,"reason":"มีเสียง น สะกด","penalty":30,"difficulty":1},{"word":"บิน","reading":"บิน","tts":"บิน","matra":8,"reason":"มีเสียง น สะกด","penalty":75,"difficulty":1},{"word":"คับ","reading":"คับ","tts":"คับ","matra":9,"reason":"มีเสียง บ สะกด","penalty":30,"difficulty":1},{"word":"กราบ","reading":"กราบ","tts":"กราบ","matra":9,"reason":"มีเสียง บ สะกด","penalty":75,"difficulty":1}]}],"seasons":[{"id":1,"slug":"กา","name":"แม่ ก กา","hint":"ไม่มีพยัญชนะเป็นตัวสะกด","example":"ตา","theme":"rice","count":4},{"id":2,"slug":"กง","name":"แม่ กง","hint":"มีเสียง ง สะกดท้าย","example":"กาง","theme":"school","count":4},{"id":3,"slug":"กม","name":"แม่ กม","hint":"มีเสียง ม สะกดท้าย","example":"ชาม","theme":"playground","count":4},{"id":4,"slug":"เกย","name":"แม่ เกย","hint":"มีเสียง ย เป็นตัวสะกด เช่น กล้วย","example":"กล้วย","theme":"village","count":3},{"id":5,"slug":"เกอว","name":"แม่ เกอว","hint":"มีเสียง ว เป็นตัวสะกด เช่น แมว","example":"แมว","theme":"market","count":3},{"id":6,"slug":"กก","name":"แม่ กก","hint":"มีเสียง ก สะกด อาจเขียนด้วย ก ข ค ฆ","example":"นก","theme":"temple","count":3},{"id":7,"slug":"กด","name":"แม่ กด","hint":"มีเสียง ด สะกด แม้เขียนตัวสะกดต่างกัน","example":"มด","theme":"festival","count":3},{"id":8,"slug":"กน","name":"แม่ กน","hint":"มีเสียง น สะกด เช่น น ญ ณ ร ล ฬ","example":"คน","theme":"temple","count":3},{"id":9,"slug":"กบ","name":"แม่ กบ","hint":"มีเสียง บ สะกด เช่น บ ป พ ฟ ภ","example":"กบ","theme":"orchard","count":3}],"images":{"rice-far-1":"assets/arcade/rice-far-1.webp","rice-grass-1":"assets/arcade/rice-grass-1.webp","rice-far-2":"assets/arcade/rice-far-2.webp","rice-grass-2":"assets/arcade/rice-grass-2.webp","rice-far-3":"assets/arcade/rice-far-3.webp","rice-grass-3":"assets/arcade/rice-grass-3.webp","rice-far-4":"assets/arcade/rice-far-4.webp","rice-grass-4":"assets/arcade/rice-grass-4.webp","transform-room":"assets/arcade/transform-room.webp","girl-painted":"assets/arcade/girl-painted.webp","stand-girl-painted":"assets/arcade/stand-girl-painted.webp","lotus-painted":"assets/arcade/lotus-painted.webp","flight-sprites":"assets/arcade/flight-sprites.webp","flight-poses":"assets/arcade/flight-poses.webp"}};
+const ARCADE_WIDTH = 1200;
+const ARCADE_HEIGHT = 650;
+const ARCADE_PLAYER_X = 236;
+const ARCADE_SPEED = 174;
+const WORD_LANES = [195, 322, 438];
+const TARGET_CONTACT = { x: 68, y: 56 };
+const COIN_CONTACT = { x: 53, y: 50 };
+const DECOY_CONTACT = { x: 46, y: 36 };
+const MAX_HEARTS = 3;
+const HEART_RECOVERY_STREAK = 3;
+const COIN_SPACING = 96;
+const CHECKPOINT_VERSION = 2;
+
+function createArcade(level, snapshot, random = Math.random) {
+  const recovered = snapshot?.levelId === level.id ? snapshot : null;
+  const targetsForRound = selectWords(level.targetPool,level.targets,recovered?.targetWords,20,random);
+  const decoysForRound = selectWords(level.decoyPool,level.decoys,recovered?.decoyWords,8,random);
+  level = {...level,targets:targetsForRound,decoys:decoysForRound};
+  const targets = new Map(level.targets.map(entry => [entry.word, entry]));
+  const collected = new Set((recovered?.collected || []).filter(word => targets.has(word)));
+  const savedFlight = recovered?.roundVersion === CHECKPOINT_VERSION ? recovered : null;
+  const state = {
+    level, random, targets, collected, objects: [], deck: [],
+    elapsed: 0, distance: 0, serial: 0, lane: 0, wordIn: .9, coinsIn: 5.5,
+    coinPattern: 0, paused: false, complete: false, failed: false,
+    wordScore: collected.size * 100 - (recovered?.deductions || 0),
+    hearts: MAX_HEARTS, correctStreak: 0,
+    coinScore: recovered?.coinScore || 0, coins: recovered?.coins || 0,
+    regularCoins: recovered?.regularCoins || 0, bonusRemaining: 0,
+    wrong: [...(recovered?.wrong || [])], speed: ARCADE_SPEED,
+  };
+  state.score = state.wordScore + state.coinScore;
+  if (savedFlight) {
+    restoreFlight(state, savedFlight);
+  } else {
+    const picked = new Set([...collected, ...state.wrong.map(entry => entry.word)]);
+    state.deck = shuffled([...level.targets, ...level.decoys].filter(entry => !picked.has(entry.word)), random);
+    sendWord(state, 905);
+  }
+  finishIfWordsExhausted(state);
+  return state;
+}
+
+function shuffled(entries, random) {
+  const copy = [...entries];
+  for (let i = copy.length - 1; i > 0; i--) {
+    const j = Math.floor(random() * (i + 1));
+    [copy[i], copy[j]] = [copy[j], copy[i]];
+  }
+  return copy;
+}
+
+function selectWords(pool, fallback, previous, count, random) {
+  if (!pool?.length) return fallback;
+  if (previous?.length === count) {
+    const entries = new Map(pool.map(entry=>[entry.word,entry]));
+    const restored = previous.map(word=>entries.get(word));
+    if (restored.every(Boolean) && new Set(previous).size === count) return restored;
+  }
+  return shuffled(pool,random).slice(0,count);
+}
+
+function restoreFlight(state, saved) {
+  for (const key of ['elapsed','distance','serial','lane','wordIn','coinsIn','bonusRemaining','coinPattern']) {
+    if (Number.isFinite(saved[key])) state[key] = saved[key];
+  }
+  if (Number.isInteger(saved.hearts)) state.hearts = Math.max(0, Math.min(MAX_HEARTS, saved.hearts));
+  if (Number.isInteger(saved.correctStreak)) {
+    state.correctStreak = Math.max(0, Math.min(HEART_RECOVERY_STREAK - 1, saved.correctStreak));
+  }
+  state.failed = state.hearts === 0;
+
+  const vocabulary = new Map([...state.level.targets, ...state.level.decoys].map(entry => [entry.word, entry]));
+  const remainingWord = word => state.collected.has(word) ? undefined : vocabulary.get(word);
+  state.deck = (saved.deck || []).map(remainingWord).filter(Boolean);
+  for (const object of saved.objects || []) {
+    if (!Number.isInteger(object.id) || !Number.isFinite(object.x) || !Number.isFinite(object.y)) continue;
+    if (object.kind === 'word') {
+      const entry = remainingWord(object.word);
+      if (entry) state.objects.push({...entry, kind:'word', id:object.id, x:object.x, y:object.y, radius:56});
+    } else if (object.kind === 'coin') {
+      const bonus = object.bonus === true;
+      state.objects.push({kind:'coin', id:object.id, x:object.x, y:object.y, bonus, radius:31, value:bonus ? 25 : 10});
+    }
+  }
+  state.serial = Math.max(state.serial, ...state.objects.map(object => object.id));
+}
+
+function sendWord(state, x = ARCADE_WIDTH + 89) {
+  const entry = state.deck.shift();
+  if (!entry) return;
+  const lane = state.lane++ % WORD_LANES.length;
+  state.objects.push({ ...entry, kind: 'word', id: ++state.serial, x, y: WORD_LANES[lane], radius: 56 });
+}
+
+function finishIfWordsExhausted(state) {
+  if (!state.failed && !state.deck.length && !state.objects.some(object => object.kind === 'word')) {
+    state.complete = true;
+  }
+}
+
+function sendCoins(state) {
+  const bonus = state.bonusRemaining > 0;
+  const count = bonus ? 4 : 3 + Math.floor(state.random() * 2);
+  const pattern = state.coinPattern++ % 3;
+  const startX = state.objects.reduce((x, object) => (
+    object.kind === 'coin' ? Math.max(x, object.x + COIN_SPACING) : x
+  ), ARCADE_WIDTH + 45);
+  for (let i = 0; i < count; i++) {
+    const position = i / (count - 1);
+    const arc = Math.sin(position * Math.PI);
+    const y = pattern === 0 ? 530 - 24 * arc
+      : pattern === 1 ? 515 + 25 * arc
+      : 540 - 30 * position;
+    state.objects.push({
+      id: ++state.serial, kind: 'coin', bonus, radius: 31, value: bonus ? 25 : 10,
+      x: startX + i * COIN_SPACING, y,
+    });
+  }
+}
+
+function advanceArcade(state, dt) {
+  if (state.paused || state.complete || state.failed || !Number.isFinite(dt) || dt <= 0) return;
+  state.elapsed += dt;
+  state.distance += state.speed * dt;
+  state.bonusRemaining = Math.max(0, state.bonusRemaining - dt);
+  for (const object of state.objects) object.x -= state.speed * dt;
+  state.objects = state.objects.filter(object => object.x > -object.radius - 12);
+  state.wordIn -= dt;
+  state.coinsIn -= dt;
+  if (state.wordIn <= 0 && state.deck.length) {
+    sendWord(state);
+    state.wordIn = 1.22 + state.random() * .32;
+  }
+  finishIfWordsExhausted(state);
+  if (!state.complete && state.coinsIn <= 0) {
+    sendCoins(state);
+    state.coinsIn = state.bonusRemaining > 0 ? 1.8 : 5.1 + state.random() * 3.6;
+  }
+}
+
+function contactTime(object, from, to, objectTravel, radius) {
+  // Measure the player's path relative to the object in units of the contact ellipse.
+  const x = (from.x - object.x - objectTravel) / radius.x;
+  const y = (from.y - object.y) / radius.y;
+  const dx = (to.x - from.x + objectTravel) / radius.x;
+  const dy = (to.y - from.y) / radius.y;
+  const outside = x * x + y * y - 1;
+  if (outside <= 0) return 0;
+  const lengthSquared = dx * dx + dy * dy;
+  const projection = x * dx + y * dy;
+  if (lengthSquared === 0 || projection >= 0) return null;
+  const discriminant = projection * projection - lengthSquared * outside;
+  if (discriminant < 0) return null;
+  const entry = (-projection - Math.sqrt(discriminant)) / lengthSquared;
+  return entry <= 1 ? entry : null;
+}
+
+// Call after advancing, with the distance the objects scrolled during the player's movement.
+function collideArcade(state, from, to, objectTravel = 0) {
+  if (state.paused || state.complete || state.failed) return [];
+  const contacts = [];
+  for (const object of state.objects) {
+    // Give pickups a little room without turning a brush past a decoy into a penalty.
+    let radius = DECOY_CONTACT;
+    if (object.kind === 'coin') radius = COIN_CONTACT;
+    else if (state.targets.has(object.word)) radius = TARGET_CONTACT;
+    const time = contactTime(object, from, to, objectTravel, radius);
+    if (time !== null) contacts.push({ id: object.id, time });
+  }
+  contacts.sort((a, b) => a.time - b.time);
+  const outcomes = [];
+  for (const { id } of contacts) {
+    const outcome = chooseArcade(state, id);
+    if (outcome) outcomes.push(outcome);
+  }
+  return outcomes;
+}
+
+function chooseArcade(state, id) {
+  if (state.paused || state.complete || state.failed) return null;
+  const index = state.objects.findIndex(item => item.id === id && item.x > 12 && item.x < ARCADE_WIDTH - 12);
+  if (index === -1) return null;
+  const [object] = state.objects.splice(index, 1);
+  let kind, delta;
+  let bonusStarted = false;
+  let heartRecovered = false;
+  if (object.kind === 'coin') {
+    kind = 'coin';
+    delta = object.value;
+    state.coins += 1;
+    state.coinScore += delta;
+    if (!object.bonus) bonusStarted = ++state.regularCoins % 5 === 0;
+  } else if (state.targets.has(object.word)) {
+    if (state.collected.has(object.word)) return null;
+    kind = 'correct';
+    delta = 100;
+    state.wordScore += delta;
+    state.collected.add(object.word);
+    if (++state.correctStreak >= HEART_RECOVERY_STREAK) {
+      state.correctStreak = 0;
+      if (state.hearts < MAX_HEARTS) {
+        state.hearts++;
+        heartRecovered = true;
+      }
+    }
+  } else {
+    kind = 'wrong';
+    delta = -object.penalty;
+    state.wordScore += delta;
+    state.wrong.push(object);
+    state.correctStreak = 0;
+    state.hearts--;
+    state.failed = state.hearts === 0;
+  }
+  if (bonusStarted) {
+    state.bonusRemaining = 8;
+    state.coinsIn = Math.min(state.coinsIn, .15);
+  }
+  state.score = state.wordScore + state.coinScore;
+  finishIfWordsExhausted(state);
+  return { kind, delta, object, bonusStarted, heartRecovered };
+}
+
+function setArcadePaused(state, paused) {
+  state.paused = paused;
+}
+
+function arcadeCheckpoint(state) {
+  return {
+    roundVersion: CHECKPOINT_VERSION,
+    levelId: state.level.id, collected: [...state.collected],
+    targetWords: state.level.targets.map(entry=>entry.word), decoyWords: state.level.decoys.map(entry=>entry.word),
+    deductions: state.collected.size * 100 - state.wordScore,
+    coinScore: state.coinScore, coins: state.coins, regularCoins: state.regularCoins,
+    wrong: state.wrong.map(({word,matra,penalty,reason,tts})=>({word,matra,penalty,reason,tts})),
+    hearts: state.hearts, correctStreak: state.correctStreak,
+    elapsed: state.elapsed, distance: state.distance, serial: state.serial, lane: state.lane,
+    wordIn: state.wordIn, coinsIn: state.coinsIn, coinPattern: state.coinPattern,
+    bonusRemaining: state.bonusRemaining,
+    deck: state.deck.map(entry => entry.word),
+    objects: state.objects.map(({kind,id,x,y,word,bonus}) => ({
+      kind,id,x,y,...(kind === 'word' ? {word} : {bonus}),
+    })),
+  };
+}
+
+
+const PALETTE = ['#fff3bd','#ffd5f2','#ffc3e9','#c7f0fa'];
+const PI2 = Math.PI * 2;
+const HOLD_POSE_SECONDS = .14;
+// Torso pivots normalized to each atlas cell.
+const BASE_ANCHORS = [[454,384],[442,384],[474,304],[420,382]].map(point=>point.map(value=>value/640));
+const EXTRA_ANCHORS = [
+  [307,274],[304,244],[296,276],
+  [280,268],[251,300],[295,266],
+  [307,240],[292,229],[271,267],
+].map(point=>point.map(value=>value/418));
+
+function summerFlight(canvas, distantScenery, foregroundScenery, width, height, prefersReducedMotion) {
+  const ctx = canvas.getContext('2d');
+  const landscapeMotion = prefersReducedMotion ? [] : [
+    // The plate's 40-pixel extension covers the full camera move.
+    distantScenery.animate(
+      [{transform:'translate3d(0,0,0)'},{transform:'translate3d(-3.09%,0,0)'}],
+      {duration:52000,easing:'cubic-bezier(.24,.51,.52,.9)',fill:'both'},
+    ),
+    // Half the strip is exactly one repeat, so the wrap lands on the same pixels.
+    foregroundScenery.animate(
+      [{transform:'translate3d(0,0,0)'},{transform:'translate3d(-50%,0,0)'}],
+      {duration:width/(ARCADE_SPEED*.43)*1000,iterations:Infinity},
+    ),
+  ];
+  for (const animation of landscapeMotion) animation.pause();
+  let sparks = [];
+  let labels = [];
+  let wake = [];
+  let tailPath = [];
+  let lastWake = 0;
+  let creatureBump = null;
+  let scale = 0;
+  let lastFlight = null;
+  let pitch = 0;
+  let direction = 0;
+  let flightCandidate = 0;
+  let candidateAt = 0;
+  let directionAt = 0;
+  let recoveryDirection = 0;
+  let recoveryUntil = 0;
+  let currentPose = -1;
+  let posedAt = 0;
+
+  function resize(cssWidth, cssHeight) {
+    if (!cssWidth || !cssHeight) return;
+    const pixelRatio = Math.min(globalThis.devicePixelRatio || 1, 2);
+    const nextWidth = Math.round(cssWidth * pixelRatio);
+    const nextHeight = Math.round(cssHeight * pixelRatio);
+    if (scale && canvas.width === nextWidth && canvas.height === nextHeight) return;
+    canvas.width = nextWidth;
+    canvas.height = nextHeight;
+    scale = nextWidth / width;
+    ctx.setTransform(scale,0,0,nextHeight / height,0,0);
+  }
+
+  const observer = new ResizeObserver(([entry])=>{
+    const {width:cssWidth,height:cssHeight} = entry.contentRect;
+    resize(cssWidth,cssHeight);
+  });
+  observer.observe(canvas);
+
+  function startScenery(speed) {
+    for (const animation of landscapeMotion) {
+      animation.playbackRate = speed/ARCADE_SPEED;
+      animation.play();
+    }
+  }
+
+  function pauseScenery() {
+    for (const animation of landscapeMotion) animation.pause();
+  }
+
+  function reset() {
+    pauseScenery();
+    for (const animation of landscapeMotion) animation.currentTime = 0;
+    sparks = [];
+    labels = [];
+    wake = [];
+    tailPath = [];
+    creatureBump = null;
+    lastWake = 0;
+    lastFlight = null;
+    pitch = 0;
+    direction = 0;
+    flightCandidate = 0;
+    candidateAt = 0;
+    directionAt = 0;
+    recoveryDirection = 0;
+    recoveryUntil = 0;
+    currentPose = -1;
+    posedAt = 0;
+  }
+  function pickup(result, elapsed, y) {
+    const {object,kind,delta} = result;
+    const color = kind === 'wrong' ? '#ff93ad' : kind === 'coin' ? '#ffe48b' : '#a6fff0';
+    const impactY = y ?? object.y;
+    creatureBump = { time: elapsed, kind };
+    labels.push({x:object.x,y:impactY-30,born:elapsed,text:delta > 0 ? '+'+delta : '−'+Math.abs(delta),color});
+    const count = prefersReducedMotion ? 4 : 12;
+    for (let i=0;i<count;i++) {
+      const angle = Math.random() * PI2;
+      const speed = 48 + Math.random()*113;
+      sparks.push({x:object.x,y:impactY,vx:Math.cos(angle)*speed-25,vy:Math.sin(angle)*speed,born:elapsed,life:.40+Math.random()*.65,r:2+Math.random()*5,color});
+    }
+  }
+  function petal(x,y,r,angle,color,alpha) {
+    ctx.save();
+    ctx.translate(x,y);
+    ctx.rotate(angle);
+    ctx.globalAlpha = alpha;
+    ctx.fillStyle = color;
+    ctx.beginPath();
+    ctx.moveTo(-r,0);
+    ctx.bezierCurveTo(-r*.15,-r*.79,r*.54,-r*.66,r,0);
+    ctx.bezierCurveTo(r*.28,r*.56,-r*.28,r*.59,-r,0);
+    ctx.fill();
+    ctx.restore();
+  }
+  function airLine(x, y, length, bend, opacity) {
+    const light = ctx.createLinearGradient(x,y,x+length,y);
+    light.addColorStop(0,'#ffedff00');
+    light.addColorStop(.55,'#fff8f2e0');
+    light.addColorStop(1,'#e0fbff00');
+    ctx.save();
+    ctx.globalAlpha = opacity;
+    ctx.strokeStyle = light;
+    ctx.lineWidth = 1.7;
+    ctx.lineCap = 'round';
+    ctx.beginPath();
+    ctx.moveTo(x,y);
+    ctx.bezierCurveTo(x+length*.33,y+bend,x+length*.72,y-bend*.3,x+length,y-bend*.44);
+    ctx.stroke();
+    ctx.restore();
+  }
+
+  function trackDirection(t, playerY) {
+    if (!lastFlight || t <= lastFlight.time) {
+      lastFlight = {time:t,y:playerY};
+      return;
+    }
+    const dt = t-lastFlight.time;
+    const climb = Math.max(-1,Math.min(1,(playerY-lastFlight.y)/(dt*365)));
+    lastFlight = {time:t,y:playerY};
+    pitch += (climb-pitch)*(1-Math.exp(-dt*8));
+    const candidate = Math.abs(pitch) > .28 ? Math.sign(pitch) : pitch*direction > .13 ? direction : 0;
+    if (candidate !== flightCandidate) {
+      flightCandidate = candidate;
+      candidateAt = t;
+    }
+    if (candidate === direction || t-candidateAt < .06) return;
+    if (direction && !candidate) {
+      recoveryDirection = direction;
+      recoveryUntil = t+.19;
+    }
+    direction = candidate;
+    directionAt = t;
+  }
+
+  function selectPose(t, age, hasExtra) {
+    if (prefersReducedMotion) return 0;
+    const blinkPhase = (t+1.2) % 7.3;
+    const blink = blinkPhase < .12 || (blinkPhase > 3.61 && blinkPhase < 3.73);
+    if (hasExtra && age < .26) return creatureBump.kind === 'wrong' ? 12 : 11;
+    if (direction) {
+      if (!hasExtra || t-directionAt < .1) return direction < 0 ? 2 : 3;
+      const strong = Math.abs(pitch) > (currentPose === 5 || currentPose === 8 ? .48 : .68);
+      return direction < 0 ? (strong ? 5 : 4) : (strong ? 8 : 7);
+    }
+    if (hasExtra && t < recoveryUntil) return recoveryDirection < 0 ? 6 : 9;
+    if (blink) return 1;
+    return hasExtra && (t+1.8) % 6.9 < .29 ? 10 : 0;
+  }
+
+  function paintPose(pose, size, image, sheet, extra) {
+    const atlas = pose >= 4 ? extra : sheet;
+    if (atlas?.naturalWidth) {
+      const grid = pose >= 4 ? 3 : 2;
+      const index = pose >= 4 ? pose - 4 : pose;
+      const [anchorX,anchorY] = (grid === 3 ? EXTRA_ANCHORS : BASE_ANCHORS)[index];
+      const cellWidth = atlas.naturalWidth / grid;
+      const cellHeight = atlas.naturalHeight / grid;
+      const h = size * cellHeight / cellWidth;
+      ctx.drawImage(atlas,index%grid*cellWidth,Math.floor(index/grid)*cellHeight,cellWidth,cellHeight,-size*anchorX,-h*anchorY,size,h);
+    } else if (image?.naturalWidth) {
+      const h = size * image.naturalHeight / image.naturalWidth;
+      ctx.drawImage(image,-size*.72,-h*.43,size,h);
+    }
+  }
+
+  function trailY(time, fallback) {
+    if (!tailPath.length || time >= tailPath.at(-1).time) return fallback;
+    for (let i=tailPath.length-1;i>0;i--) {
+      const older = tailPath[i-1];
+      const newer = tailPath[i];
+      if (older.time <= time) {
+        const portion = (time-older.time)/(newer.time-older.time);
+        return older.y+(newer.y-older.y)*portion;
+      }
+    }
+    return tailPath[0].y;
+  }
+
+  function animatedTail(t, x, y) {
+    if (prefersReducedMotion) return;
+    if (!tailPath.length || t-tailPath.at(-1).time > .015) tailPath.push({time:t,y});
+    tailPath = tailPath.filter(point=>t-point.time < .66);
+    const strands = [
+      {length:209,width:13,spread:8,phase:0,main:'#f6a6f1aa',edge:'#ffe4fb00'},
+      {length:182,width:7,spread:19,phase:1.3,main:'#ffb6debc',edge:'#ff8dcd00'},
+      {length:164,width:3.5,spread:-3,phase:2.4,main:'#fff1c1c9',edge:'#fff5e700'},
+    ];
+    for (const strand of strands) {
+      const rootX = x-22;
+      const left = rootX-strand.length;
+      const path = [];
+      for (let i=0;i<=12;i++) {
+        const u = i/12;
+        const lag = trailY(t-u*.31,y)-y;
+        const wave = Math.sin(t*(4.5+strand.phase*.36)-u*8+strand.phase);
+        path.push({
+          x:rootX-u*strand.length,
+          y:y+24+u*strand.spread+lag*(.4+u*.44)+wave*18*u,
+          width:strand.width*Math.sin(Math.PI*u)*(.65+.35*Math.sin(u*4+t*2)**2),
+        });
+      }
+      const light = ctx.createLinearGradient(left,y,rootX,y);
+      light.addColorStop(0,strand.edge);
+      light.addColorStop(.29,strand.main);
+      light.addColorStop(.74,strand.main);
+      light.addColorStop(1,strand.edge);
+      ctx.fillStyle = light;
+      ctx.beginPath();
+      ctx.moveTo(path[0].x,path[0].y);
+      for (let i=1;i<path.length;i++) {
+        const from=path[i-1], to=path[i];
+        ctx.quadraticCurveTo(from.x,from.y-from.width,(from.x+to.x)/2,(from.y+to.y-from.width-to.width)/2);
+      }
+      ctx.lineTo(path.at(-1).x,path.at(-1).y);
+      for (let i=path.length-2;i>=0;i--) {
+        const from=path[i+1], to=path[i];
+        ctx.quadraticCurveTo(from.x,from.y+from.width,(from.x+to.x)/2,(from.y+to.y+from.width+to.width)/2);
+      }
+      ctx.closePath();
+      ctx.fill();
+    }
+  }
+
+  function fly(state, image, playerY, sheet, extra) {
+    const t = state.elapsed;
+    const age = creatureBump ? t - creatureBump.time : 1;
+    const react = age < .48 ? Math.sin(age/.48*Math.PI) : 0;
+    const horizontal = ARCADE_PLAYER_X;
+    const vertical = playerY + (prefersReducedMotion ? 0 : Math.sin(t*2.4)*2.6);
+    trackDirection(t,playerY);
+
+    const aura = ctx.createRadialGradient(horizontal-35,vertical+10,6,horizontal-35,vertical+10,106);
+    aura.addColorStop(0,age < .3 && creatureBump.kind === 'wrong' ? '#fcb7ce88' : '#fff7d443');
+    aura.addColorStop(.4,age < .3 && creatureBump.kind === 'coin' ? '#ffeeb477' : '#efadf133');
+    aura.addColorStop(1,'#ffcce900');
+    ctx.fillStyle = aura;
+    ctx.fillRect(horizontal-141,vertical-96,212,212);
+    animatedTail(t,horizontal,vertical);
+
+    if (!prefersReducedMotion && t-lastWake >= .043) {
+      wake.push({
+        x:horizontal-83, y:vertical+39, born:t, phase:Math.random()*PI2,
+        color:PALETTE[Math.floor(Math.random()*PALETTE.length)],
+      });
+      lastWake=t;
+    }
+    const wakeLife = .88;
+    wake = wake.filter(point=> t-point.born < wakeLife);
+    for (const point of wake) {
+      const life = (t-point.born)/wakeLife;
+      const x = point.x - life*137;
+      const y = point.y + Math.sin(point.phase + life*6)*22*life;
+      petal(x,y,4.5*(1-life)+1.5,point.phase+life*3,point.color,.77*(1-life));
+      airLine(x-31,y+8,47,12*Math.sin(point.phase),.24*(1-life));
+    }
+
+    const drift = prefersReducedMotion ? 0 : Math.sin(t*2.4)*.026 + pitch*.11;
+    ctx.save();
+    ctx.translate(horizontal,vertical);
+    ctx.rotate(drift);
+    const size = 239 + (prefersReducedMotion ? 0 : react*7);
+    const nextPose = selectPose(t,age,Boolean(extra?.naturalWidth));
+    const blinkNow = nextPose === 1 || currentPose === 1;
+    const reactionNow = nextPose >= 11 && currentPose < 11;
+    // Paint one silhouette per frame. Align all poses at the torso and hold direction changes briefly.
+    if (nextPose !== currentPose && (currentPose < 0 || blinkNow || reactionNow || t-posedAt >= HOLD_POSE_SECONDS)) {
+      currentPose = nextPose;
+      posedAt = t;
+    }
+    paintPose(currentPose,size,image,sheet,extra);
+    ctx.restore();
+
+    if (!prefersReducedMotion) {
+      for (let i=0;i<5;i++) {
+        const life = (t*.69+i/5)%1;
+        const shimmer = Math.sin(life*Math.PI);
+        const x = horizontal+47 - life*178;
+        const y = vertical+Math.sin(i*2.4+life*4)*58 + (i%2 ? 9 : -9);
+        ctx.fillStyle = PALETTE[i%PALETTE.length];
+        ctx.globalAlpha = shimmer*.68;
+        ctx.beginPath();
+        ctx.arc(x,y,(i%2 ? 2.2 : 3.3)*shimmer,0,PI2);
+        ctx.fill();
+      }
+      ctx.globalAlpha = 1;
+    }
+  }
+  function draw(state, character, playerY = 312, characterSheet, poseSheet) {
+    if (!scale) resize(canvas.clientWidth,canvas.clientHeight);
+    ctx.clearRect(0,0,width,height);
+    const t = state.elapsed;
+    if (!prefersReducedMotion) {
+      for (let i=0;i<18;i++) {
+        const x = ((i*149-state.distance*(.44+(i%4)*.14))%(width+32)+width+32)%(width+32);
+        const y = 101+(i*73)%480+Math.sin(t*.9+i)*11;
+        const alpha = .22 + Math.sin(t*1.6+i)*.14;
+        petal(x,y,2.4+i%4,t*.9+i,PALETTE[i%4],alpha);
+      }
+      for (let i=0;i<9;i++) {
+        const travel = (i*241 + state.distance*(.82+(i%3)*.17)) % (width+140);
+        const y = 107+(i*79)%453+Math.sin(t*1.3+i)*16;
+        airLine(width+12-travel,y,44+(i%4)*16,Math.sin(t*1.6+i)*17,.18+(i%3)*.065);
+      }
+    }
+    fly(state,character,playerY,characterSheet,poseSheet);
+    sparks = sparks.filter(p=>t-p.born < p.life);
+    for (const p of sparks) {
+      const age = t-p.born;
+      const movement = prefersReducedMotion ? 0 : age;
+      petal(p.x+p.vx*movement,p.y+p.vy*movement+57*movement*movement,p.r,movement*7,p.color,1-age/p.life);
+    }
+    labels = labels.filter(item=>t-item.born < .92);
+    for (const item of labels) {
+      const age = t-item.born;
+      ctx.save();
+      ctx.globalAlpha = Math.min(1,(.92-age)*3);
+      ctx.fillStyle = item.color;
+      ctx.shadowColor = '#452045';
+      ctx.shadowBlur = 9;
+      ctx.font = '800 32px Tahoma, system-ui, sans-serif';
+      ctx.textAlign = 'center';
+      ctx.fillText(item.text, Math.max(47,Math.min(width-47,item.x)), item.y-(prefersReducedMotion ? 0 : 48*age));
+      ctx.restore();
+    }
+  }
+  return {reset,pickup,draw,startScenery,pauseScenery};
+}
+
+// Web Audio cues and original Thai-inspired loops. Audio unlock stays in a player gesture.
+function arcadeAudio() {
+  const introNames = new Set(['house', 'magic', 'takeoff']);
+  const voices = new Set();
+  const pending = [];
+  const quiet = .0001;
+  const maxVoices = 24;
+  const musicTag = 'background-music';
+  // Each step is an eighth note. Null leaves space for the drum and ching.
+  const stages = [
+    {
+      tempo:104, voice:'ranat',
+      notes:[72,74,76,null,79,76,74,null,72,76,79,81,79,null,76,74,
+             76,79,81,null,84,81,79,null,76,74,72,74,76,null,72,null],
+      bass:[48,45,43,48], ching:[2,6], drum:[0,4],
+    },
+    {
+      tempo:116, voice:'plucked',
+      notes:[74,null,78,81,83,81,78,null,76,78,null,81,78,76,74,null,
+             81,83,86,83,null,81,78,81,76,null,78,76,74,71,74,null],
+      bass:[50,47,45,50], ching:[3,7], drum:[0,5],
+    },
+    {
+      tempo:124, voice:'ranat',
+      notes:[79,81,83,86,null,86,83,81,79,null,83,86,88,86,null,83,
+             81,83,86,88,91,88,86,null,83,81,83,null,79,74,79,null],
+      bass:[55,52,50,55], ching:[1,3,7], drum:[0,4,6],
+    },
+    {
+      tempo:111, voice:'gong',
+      notes:[76,81,84,null,86,88,86,84,81,84,null,86,84,81,79,null,
+             84,86,88,91,null,88,86,84,81,null,79,76,79,81,null,81],
+      bass:[45,48,43,45], ching:[2,5,7], drum:[0,3,6],
+    },
+  ];
+  const screens = {
+    menu: {
+      tempo:94, voice:'ranat', volume:.9,
+      notes:[74,78,81,null,83,81,78,null,76,74,78,81,78,null,74,null],
+      bass:[50,45], ching:[3,7], drum:[0,4],
+    },
+    select: {
+      tempo:108, voice:'plucked', volume:.83,
+      notes:[67,null,71,74,76,null,74,71,69,71,null,74,71,69,67,null],
+      bass:[43,50], ching:[2,6], drum:[0],
+    },
+    intro: {
+      tempo:82, voice:'flute', volume:.58,
+      notes:[69,null,72,74,null,76,79,null,81,null,79,76,null,74,72,null],
+      bass:[45,48], ching:[5], drum:[0],
+    },
+    summary: {
+      tempo:98, voice:'gong', volume:.85,
+      notes:[76,79,84,86,88,null,86,84,79,81,84,null,88,86,84,null],
+      bass:[48,43], ching:[3,7], drum:[0,4],
+    },
+    'failed-summary': {
+      tempo:76, voice:'plucked', volume:.68,
+      notes:[65,null,69,null,72,74,72,null,69,null,67,69,72,null,65,null],
+      bass:[41,48], ching:[6], drum:[0],
+    },
+  };
+  let context;
+  let output;
+  let noiseBuffer;
+  let muted = false;
+  let resuming;
+  let musicTrack;
+  let musicTimer;
+  let musicStep = 0;
+  let nextMusicTime = 0;
+
+  function release(voice) {
+    voices.delete(voice);
+    voice.source.disconnect();
+    voice.envelope.disconnect();
+    voice.filter?.disconnect();
+  }
+
+  function stop(voice, fade = .018) {
+    const now = context.currentTime;
+    const gain = voice.envelope.gain;
+    if (voice.cancelled) return;
+    voice.cancelled = true;
+    if (typeof gain.cancelAndHoldAtTime === 'function') {
+      gain.cancelAndHoldAtTime(now);
+    } else {
+      gain.cancelScheduledValues(now);
+      gain.setValueAtTime(gain.value, now);
+    }
+    gain.linearRampToValueAtTime(0, now + fade);
+    try {
+      voice.source.stop(now + fade);
+    } catch {
+      release(voice);
+    }
+  }
+
+  function playVoice(source, options) {
+    const { at, duration, gain, attack = .018, tag, filter } = options;
+    const envelope = context.createGain();
+    const end = at + duration;
+    envelope.gain.setValueAtTime(quiet, at);
+    envelope.gain.exponentialRampToValueAtTime(gain, at + Math.min(attack,duration / 2));
+    envelope.gain.exponentialRampToValueAtTime(quiet, end);
+    if (filter) {
+      source.connect(filter);
+      filter.connect(envelope);
+    } else {
+      source.connect(envelope);
+    }
+    envelope.connect(output);
+
+    if (voices.size >= maxVoices) {
+      const active = [...voices].filter(voice => !voice.cancelled);
+      const oldest = active.find(voice=>voice.tag === musicTag) || active[0];
+      if (oldest) stop(oldest);
+    }
+    const voice = {source,envelope,tag,filter,cancelled:false};
+    voices.add(voice);
+    source.onended = () => release(voice);
+    source.start(at);
+    source.stop(end + .012);
+  }
+
+  function tone(tag, start, frequency, offset, duration, gain, wave = 'sine', endFrequency = frequency, attack) {
+    const oscillator = context.createOscillator();
+    const at = start + offset;
+    oscillator.type = wave;
+    oscillator.frequency.setValueAtTime(frequency, at);
+    oscillator.frequency.exponentialRampToValueAtTime(endFrequency, at + duration);
+    playVoice(oscillator,{at,duration,gain,attack,tag});
+  }
+
+  function breeze(tag, start, offset, duration, gain, from, to, type = 'lowpass') {
+    const at = start + offset;
+    if (!noiseBuffer) {
+      noiseBuffer = context.createBuffer(1,Math.ceil(context.sampleRate * .46),context.sampleRate);
+      const samples = noiseBuffer.getChannelData(0);
+      for (let index = 0; index < samples.length; index++) samples[index] = Math.random() * 2 - 1;
+    }
+    const source = context.createBufferSource();
+    const filter = context.createBiquadFilter();
+    source.buffer = noiseBuffer;
+    filter.type = type;
+    filter.Q.value = .65;
+    filter.frequency.setValueAtTime(from, at);
+    filter.frequency.exponentialRampToValueAtTime(to, at + duration);
+    playVoice(source,{at,duration,gain,attack:.045,tag,filter});
+  }
+
+  function cue(name) {
+    if (!context || context.state !== 'running' || muted || globalThis.document?.hidden) return;
+    const start = context.currentTime + .005;
+    const note = (hz,offset,duration,gain,wave,endHz) => tone(name,start,hz,offset,duration,gain,wave,endHz);
+    const air = (offset,duration,gain,from,to,type) => breeze(name,start,offset,duration,gain,from,to,type);
+    switch (name) {
+      case 'house':
+        // A soft wooden latch and two little outside chimes.
+        air(0,.11,.20,370,190);
+        note(154,.014,.10,.10,'triangle',109);
+        note(587,.13,.23,.09);
+        note(880,.25,.26,.075);
+        break;
+      case 'magic':
+        // A rising lotus shimmer, with a breath of air and an overtone.
+        air(.04,.32,.10,460,2050,'bandpass');
+        [392,523,659,784,1047].forEach((hz,index)=>note(hz,index * .085,.31,.095,'sine',hz * 1.021));
+        note(1568,.41,.27,.05);
+        break;
+      case 'takeoff':
+        air(0,.34,.22,450,2600,'bandpass');
+        note(350,.026,.27,.11,'sine',1047);
+        note(1319,.22,.22,.08);
+        break;
+      case 'correct':
+        note(659,0,.15,.22,'sine',784);
+        note(988,.082,.19,.18);
+        break;
+      case 'wrong':
+        note(294,0,.22,.14,'triangle',216);
+        break;
+      case 'failed':
+        note(392,0,.23,.13);
+        note(330,.12,.26,.11);
+        note(262,.24,.31,.085);
+        break;
+      case 'coin':
+        note(1175,0,.115,.19);
+        note(1568,.045,.145,.12);
+        break;
+      case 'bonus':
+      case 'complete': {
+        const completed = name === 'complete';
+        const notes = completed ? [523,659,784,1047,1319] : [523,659,784,1047];
+        notes.forEach((hz,index)=>note(hz,index * (completed ? .105 : .070),completed ? .32 : .25,.17));
+        break;
+      }
+    }
+  }
+
+  function pitch(midi) {
+    return 440 * 2 ** ((midi - 69) / 12);
+  }
+
+  function musicTone(at, frequency, duration, gain, wave = 'sine', end = frequency, attack = .005) {
+    tone(musicTag,at,frequency,0,duration,gain,wave,end,attack);
+  }
+
+  function scheduleMusicStep(at, track, step) {
+    const barStep = step % 8;
+    const bar = Math.floor(step / 8) % track.bass.length;
+    const note = track.notes[step % track.notes.length];
+    const volume = track.volume ?? 1;
+    const strike = (hz,duration,gain,wave,end,attack)=>musicTone(at,hz,duration,gain * volume,wave,end,attack);
+    if (note !== null) {
+      const hz = pitch(note);
+      const gain = barStep % 4 === 0 ? .098 : .079;
+      if (track.voice === 'plucked') {
+        strike(hz,.21,gain,'triangle',hz * .997);
+        strike(hz * 2,.075,.026);
+      } else if (track.voice === 'gong') {
+        strike(hz,.27,gain);
+        strike(hz * 2.32,.115,.027);
+        strike(hz * 4.18,.062,.011);
+      } else if (track.voice === 'flute') {
+        strike(hz,.31,gain,'sine',hz * 1.003,.04);
+        strike(hz * 2,.20,.021,'sine',hz * 2,.03);
+      } else {
+        // As with a struck wooden bar, the higher partials decay first.
+        strike(hz,.19,gain);
+        strike(hz * 2.76,.086,.029);
+        strike(hz * 5.40,.041,.013);
+      }
+    }
+    if (track.drum.includes(barStep)) {
+      const hz = pitch(track.bass[bar]);
+      strike(hz,.23,barStep === 0 ? .067 : .045,'sine',hz * .84);
+      strike(hz * 2.35,.057,.024,'triangle',hz * 1.77);
+    }
+    if (track.ching.includes(barStep)) {
+      const hz = track.voice === 'plucked' ? 1917 : 2130;
+      strike(hz,.066,.016);
+      strike(hz * 1.56,.048,.010);
+    }
+  }
+
+  function stopMusicPlayback(fade) {
+    clearInterval(musicTimer);
+    musicTimer = undefined;
+    for (const voice of voices) {
+      if (voice.tag === musicTag) stop(voice,fade);
+    }
+  }
+
+  function scheduleMusic() {
+    if (context?.state !== 'running' || muted || !musicTrack || globalThis.document?.hidden) {
+      stopMusicPlayback();
+      return;
+    }
+    const now = context.currentTime;
+    // After a stalled frame, continue from this beat rather than playing a burst.
+    if (nextMusicTime < now) nextMusicTime = now + .025;
+    while (nextMusicTime < now + .16) {
+      scheduleMusicStep(nextMusicTime,musicTrack,musicStep);
+      musicStep = (musicStep + 1) % musicTrack.notes.length;
+      nextMusicTime += 30 / musicTrack.tempo;
+    }
+  }
+
+  function syncMusic() {
+    if (musicTimer !== undefined || !musicTrack || muted || globalThis.document?.hidden || context?.state !== 'running') return;
+    nextMusicTime = context.currentTime + .035;
+    musicTimer = setInterval(scheduleMusic,32);
+    scheduleMusic();
+  }
+
+  function startMusic(theme) {
+    const selected = Object.hasOwn(screens,theme) ? screens[theme] : stages[Number(theme) - 1];
+    if (musicTrack !== selected) {
+      stopMusicPlayback(.05);
+      musicTrack = selected;
+      musicStep = 0;
+    }
+    syncMusic();
+  }
+
+  function stopMusic() {
+    stopMusicPlayback();
+    musicTrack = undefined;
+    musicStep = 0;
+  }
+
+  function flush() {
+    if (context?.state !== 'running') return;
+    const now = performance.now();
+    const recent = pending.splice(0).filter(event=>now - event.time < 650);
+    for (const event of recent) cue(event.name);
+    syncMusic();
+  }
+
+  function unlock() {
+    if (muted || globalThis.document?.hidden) return;
+    const Context = globalThis.AudioContext || globalThis.webkitAudioContext;
+    if (!Context) return;
+    try {
+      if (!context) {
+        context = new Context();
+        const master = context.createGain();
+        const limiter = context.createDynamicsCompressor();
+        master.gain.value = .48;
+        limiter.threshold.value = -12;
+        limiter.ratio.value = 8;
+        master.connect(limiter);
+        limiter.connect(context.destination);
+        output = master;
+      }
+      if (context.state === 'running') {
+        flush();
+      } else if (!resuming) {
+        resuming = Promise.resolve(context.resume()).then(flush,()=>{}).finally(()=>{resuming = undefined;});
+      }
+    } catch {
+      // Sound stays optional on devices without an available audio context.
+      if (!output) context = undefined;
+    }
+  }
+
+  function play(name) {
+    if (!context || muted || globalThis.document?.hidden) return;
+    if (context.state === 'running') {
+      cue(name);
+    } else {
+      if (pending.length >= 5) pending.shift();
+      pending.push({name,time:performance.now()});
+    }
+  }
+
+  function cancelIntro() {
+    for (let index = pending.length - 1; index >= 0; index--) {
+      if (introNames.has(pending[index].name)) pending.splice(index,1);
+    }
+    for (const voice of voices) {
+      if (introNames.has(voice.tag)) stop(voice);
+    }
+  }
+
+  function stopAll() {
+    pending.length = 0;
+    stopMusicPlayback();
+    if (context) {
+      for (const voice of voices) stop(voice);
+    }
+  }
+
+  function setMuted(value) {
+    muted = Boolean(value);
+    if (muted) stopAll();
+    else syncMusic();
+  }
+
+  globalThis.document?.addEventListener('visibilitychange',()=>{
+    if (globalThis.document.hidden) stopAll();
+    else syncMusic();
+  });
+  return {unlock,play,setMuted,cancelIntro,startMusic,stopMusic};
+}
+
+function chromeHref(href, device) {
+  const url = new URL(href);
+  if (url.protocol !== 'https:' || url.username || url.password) return null;
+
+  const {userAgent = '', platform = '', maxTouchPoints = 0} = device;
+  const appleMobile = /iPhone|iPad|iPod/i.test(userAgent) ||
+    (platform === 'MacIntel' && maxTouchPoints > 1);
+  const inApp = /\bwv\b|FBAN|FBAV|Instagram|Line\//i.test(userAgent);
+  const hostAndPath = url.href.slice(url.protocol.length + 2);
+
+  if (appleMobile && (!/CriOS\//i.test(userAgent) || inApp)) {
+    return 'googlechromes://' + hostAndPath;
+  }
+
+  if (/Android/i.test(userAgent)) {
+    const chrome = /Chrome\//i.test(userAgent) && !inApp &&
+      !/SamsungBrowser|EdgA|OPR\//i.test(userAgent);
+    if (!chrome) {
+      return 'intent://' + hostAndPath + '#Intent;scheme=https;package=com.android.chrome;' +
+        'S.browser_fallback_url=' + encodeURIComponent(url.href) + ';end';
+    }
+  }
+  return null;
+}
+
+function wireChromeLink(element, href = location.href, device = navigator) {
+  const target = chromeHref(href, device);
+  element.hidden = !target;
+  if (target) element.href = target;
+}
+
+
+const $ = (selector) => document.querySelector(selector);
+const storeKey = 'krasue-flight-settings-v2';
+const { levels, seasons, images } = globalThis.arcadePack;
+const audio = arcadeAudio();
+const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+const distantScenery = $('#scenery-far');
+const foregroundScenery = $('#scenery-grass');
+const paint = summerFlight($('#scene'), distantScenery, foregroundScenery, ARCADE_WIDTH, ARCADE_HEIGHT, reduce);
+const elements = new Map();
+const pictureCache = new Map();
+const flightHint = 'ชนคำที่ไม่มีตัวสะกด · ชนคำลวงเสีย 1 หัวใจ';
+const directionKeys = new Set();
+const neutralY = 312;
+const story = [
+  { position:0, caption:'บ้านน้อยริมทุ่ง', cue:'house' },
+  { position:.18, caption:'กระสือน้อยก้าวออกมาพร้อมดอกบัว' },
+  { position:.46, caption:'กลีบบัวหมุนรอบตัว กระสือน้อยค่อย ๆ ลอยขึ้น', cue:'magic' },
+  { position:.69, caption:'โบยบินสู่ทุ่งนาคำวิเศษ', cue:'takeoff' },
+];
+let play = null;
+let journey = [];
+let mode = 'lobby';
+let lastFrame;
+let frameRequest;
+let introTimers = [];
+let feedbackUntil = 0;
+let transitionTimer;
+let revealTimer;
+let preferences = read();
+let playerY = neutralY;
+let desiredY = neutralY;
+let gesture = null;
+let guideUntil = 0;
+let heartFlashUntil = 0;
+
+function read() {
+  try {
+    const saved = JSON.parse(localStorage.getItem(storeKey) || localStorage.getItem('krasue-bubble-flight-v1'));
+    if (saved && typeof saved === 'object') return {muted:!!saved.muted, speed:saved.speed === .75 ? .75 : 1};
+  } catch {}
+  return {muted:false, speed:1};
+}
+
+function save() {
+  try { localStorage.setItem(storeKey,JSON.stringify(preferences)); } catch {}
+}
+
+function image(name) {
+  if (!images[name]) return undefined;
+  if (!pictureCache.has(name)) {
+    const element = new Image();
+    element.src = images[name];
+    pictureCache.set(name,element);
+  }
+  return pictureCache.get(name);
+}
+
+function showStageImage(element, level) {
+  element.src = images['rice-far-'+level.local];
+}
+
+function showScenery(level) {
+  showStageImage(distantScenery,level);
+  foregroundScenery.style.backgroundImage = 'url("' + images['rice-grass-'+level.local] + '")';
+  const next = levels.find(candidate=>candidate.local===level.local+1);
+  if (next) {
+    image('rice-far-'+next.local);
+    image('rice-grass-'+next.local);
+  }
+}
+
+function escapeText(value) {
+  return String(value).replace(/[&<>"']/g, character=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[character]));
+}
+
+function selectMotionSpeed(label) {
+  if (!play) return;
+  play.speed = Number(label) === .75 ? 132 : ARCADE_SPEED;
+}
+
+function setAudio() {
+  audio.setMuted(!!preferences.muted);
+  for (const button of document.querySelectorAll('[data-audio]')) {
+    button.setAttribute('aria-pressed', String(!preferences.muted));
+    button.textContent = preferences.muted ? 'เสียงปิด' : 'เสียงเปิด';
+  }
+}
+
+function renderLobby() {
+  const first = levels[0];
+  $('#start-meta').textContent = 'ด่าน ' + first.id + ' · ' + first.name;
+  $('#start').onclick = ()=>startNewRun();
+  const stages = $('#stage-list');
+  stages.replaceChildren();
+  for (const level of levels) {
+    const tile = document.createElement('button');
+    tile.type = 'button';
+    tile.dataset.level = level.id;
+    tile.className = 'stage-card';
+    tile.innerHTML = `<img alt="" loading="lazy"><div><span>ด่าน ${level.id}</span><strong>${escapeText(level.name)}</strong></div>`;
+    showStageImage(tile.querySelector('img'),level);
+    tile.onclick = ()=>{ $('#level-menu').close(); startNewRun(level); };
+    stages.append(tile);
+  }
+}
+
+function clearIntro(keepSound = false) {
+  for (const id of introTimers) clearTimeout(id);
+  introTimers = [];
+  if (!keepSound) audio.cancelIntro();
+  const intro = $('#intro');
+  intro.classList.remove('story-playing');
+  intro.hidden = true;
+  $('.hud').inert = false;
+  $('#floatables').inert = false;
+}
+
+function drawFlight() {
+  const sheet = image('flight-sprites');
+  const poses = images['flight-poses'] ? image('flight-poses') : undefined;
+  paint.draw(play,image('girl-painted'),playerY,sheet,poses);
+}
+
+function boundHeight(y) {
+  return Math.max(125,Math.min(559,y));
+}
+
+function clearSteering() {
+  gesture = null;
+  directionKeys.clear();
+}
+
+function startSteering(event) {
+  if (mode !== 'flight' || gesture || event.button !== 0 || event.target.closest('button, .hud')) return;
+  audio.unlock();
+  gesture = {id:event.pointerId, start:event.clientY, height:desiredY};
+  try { $('#field').setPointerCapture(event.pointerId); } catch {}
+}
+
+function steer(event) {
+  if (mode !== 'flight' || gesture?.id !== event.pointerId) return;
+  const height = $('#field').clientHeight;
+  if (height) desiredY = boundHeight(gesture.height + (event.clientY-gesture.start)*ARCADE_HEIGHT/height);
+}
+
+function stopSteering(event) {
+  if (gesture?.id === event.pointerId) gesture = null;
+}
+
+function movePlayer(dt) {
+  const move = Number(directionKeys.has('ArrowDown'))-Number(directionKeys.has('ArrowUp'));
+  if (move) desiredY = boundHeight(desiredY + move*285*dt);
+  playerY += (desiredY-playerY)*(1-Math.exp(-dt*21));
+}
+
+function startRunning(keepStorySound = false) {
+  clearIntro(keepStorySound);
+  $('#flight-guide').hidden = play.elapsed >= guideUntil;
+  mode = 'flight';
+  $('#field').focus({preventScroll:true});
+  setArcadePaused(play,false);
+  paint.startScenery(play.speed);
+  audio.startMusic(play.level.id);
+  lastFrame = undefined;
+  refreshHud();
+  renderObjects();
+  drawFlight();
+  frameRequest = requestAnimationFrame(tick);
+}
+
+function runIntro() {
+  mode = 'intro';
+  audio.startMusic('intro');
+  const duration = reduce ? 2350 : 3800;
+  const intro = $('#intro');
+  showStageImage($('#intro-house'),levels[0]);
+  $('#intro-room').src = images['transform-room'];
+  $('#intro-flying').src = images['girl-painted'];
+  $('#intro-standing').src = images['stand-girl-painted'];
+  const showBeat = ({caption,cue})=>{
+    $('#intro-caption').textContent = caption;
+    if (cue) audio.play(cue);
+  };
+
+  intro.style.setProperty('--intro-duration', duration + 'ms');
+  intro.hidden = false;
+  // Commit the base styles so replay always starts the CSS animations at frame zero.
+  void intro.offsetWidth;
+  intro.classList.add('story-playing');
+  $('.hud').inert = true;
+  $('#floatables').inert = true;
+  $('#skip').focus({preventScroll:true});
+  showBeat(story[0]);
+  for (const beat of story.slice(1)) {
+    introTimers.push(setTimeout(()=>showBeat(beat), beat.position * duration));
+  }
+  introTimers.push(setTimeout(()=>startRunning(true), duration));
+}
+
+function clearStageTransition(hide = true) {
+  clearTimeout(transitionTimer);
+  clearTimeout(revealTimer);
+  transitionTimer = revealTimer = undefined;
+  if (hide) {
+    const curtain = $('#stage-wipe');
+    curtain.hidden = true;
+    curtain.classList.remove('visible','fade-out');
+  }
+}
+
+function startNewRun(level = levels[0]) {
+  journey = [];
+  begin(level,{showStory:true});
+}
+
+function begin(level, {showStory = false, preserveTransition = false} = {}) {
+  audio.stopMusic();
+  clearIntro();
+  clearStageTransition(!preserveTransition);
+  if (frameRequest != null) cancelAnimationFrame(frameRequest);
+  if ($('#panel').open) $('#panel').close();
+  audio.unlock();
+  play = createArcade(level,null);
+  selectMotionSpeed(preferences.speed);
+  feedbackUntil = 0;
+  playerY = desiredY = neutralY;
+  heartFlashUntil = 0;
+  clearSteering();
+  guideUntil = journey.length ? 0 : 3.5;
+  $('#flight-guide').hidden = true;
+  elements.clear();
+  paint.reset();
+  showScenery(level);
+  $('#floatables').replaceChildren();
+  $('#lobby').hidden = true;
+  $('#game').hidden = false;
+  document.body.classList.add('in-game');
+  $('#hud-place').textContent = 'ด่าน ' + level.id + ' · ' + level.name;
+  setFeedback(flightHint);
+  refreshHud();
+  if (showStory) runIntro();
+  else startRunning();
+}
+
+function totalBeforeStage(key) {
+  return journey.reduce((sum,result)=>sum+result[key],0);
+}
+
+function refreshHud() {
+  updateText('#hud-words', play.collected.size + '/' + play.targets.size);
+  updateText('#hud-score', (totalBeforeStage('score')+play.score).toLocaleString('th-TH'));
+  updateText('#hud-coins', String(totalBeforeStage('coins')+play.coins));
+  const wordsLeft = play.deck.length + play.objects.filter(item=>item.kind === 'word').length;
+  updateText('#hud-remaining','ฟองคำเหลือ ' + wordsLeft);
+  const heartCount = play.hearts;
+  const hearts = $('#hud-hearts');
+  if (hearts.dataset.count !== String(heartCount)) {
+    hearts.dataset.count = heartCount;
+    [...hearts.querySelectorAll('.heart')].forEach((heart,index)=>{heart.dataset.filled = String(index < heartCount);});
+    hearts.setAttribute('aria-label','หัวใจ ' + heartCount + ' จาก 3');
+  }
+  hearts.classList.toggle('heart-flash',heartFlashUntil > play.elapsed);
+  const showBonus = play.bonusRemaining > 0;
+  if ($('#bonus').hidden === showBonus) $('#bonus').hidden = !showBonus;
+  if (showBonus) updateText('#bonus-time', Math.ceil(play.bonusRemaining) + ' วิ');
+}
+
+function updateText(selector, value) {
+  const element = $(selector);
+  if (element.textContent !== value) element.textContent = value;
+}
+
+function setFeedback(text, kind = '') {
+  const label = $('#feedback');
+  label.textContent = text;
+  label.dataset.kind = kind;
+  feedbackUntil = (play?.elapsed || 0) + 2.25;
+}
+
+function makeObject(object) {
+  const item = document.createElement('div');
+  item.className = 'floating ' + object.kind + (object.bonus ? ' bonus-coin' : '');
+  item.dataset.object = object.id;
+  item.style.setProperty('--float-phase',-(object.id % 11) * .163 + 's');
+  if (object.kind === 'coin') {
+    item.innerHTML = '<span class="coin-face" aria-hidden="true">' + (object.bonus ? '✦' : '✿') + '</span>';
+    item.setAttribute('aria-label','เหรียญ +' + object.value);
+  } else {
+    const flower = document.createElement('img');
+    flower.src = images['lotus-painted'];
+    flower.className = 'lotus-bed';
+    flower.alt = '';
+    const bubble = document.createElement('span');
+    bubble.className = 'bubble';
+    bubble.textContent = object.word;
+    const tag = document.createElement('small');
+    tag.className = 'penalty';
+    tag.textContent = 'ถ้าผิด −' + object.penalty;
+    item.append(flower,bubble,tag);
+    item.dataset.word = object.word;
+  }
+  $('#floatables').append(item);
+  return item;
+}
+
+function renderObjects() {
+  const active = new Set();
+  for (const object of play.objects) {
+    if (object.x < 12 || object.x > ARCADE_WIDTH-12) continue;
+    active.add(object.id);
+    let item = elements.get(object.id);
+    if (!item) {
+      item = makeObject(object);
+      elements.set(object.id,item);
+    }
+    item.style.left = (object.x / ARCADE_WIDTH * 100) + '%';
+    item.style.top = (object.y / ARCADE_HEIGHT * 100) + '%';
+  }
+  for (const [id,item] of elements) {
+    if (!active.has(id)) {
+      item.remove();
+      elements.delete(id);
+    }
+  }
+}
+
+function handleContact(outcome) {
+  audio.play(outcome.bonusStarted ? 'bonus' : outcome.kind);
+  paint.pickup(outcome,play.elapsed,outcome.object.y);
+  if (outcome.kind === 'correct') {
+    if (outcome.heartRecovered) heartFlashUntil = play.elapsed + 1;
+    setFeedback(outcome.heartRecovered ? 'คำถูก +100 · ได้หัวใจคืน 1 ดวง' : outcome.object.word + ' · คำแม่ ก กา +100','correct');
+  } else if (outcome.kind === 'wrong') {
+    const actual = seasons.find(season=>season.id === outcome.object.matra)?.name || 'มาตราอื่น';
+    heartFlashUntil = 0;
+    setFeedback(outcome.object.word + ' อยู่' + actual + ' · −' + Math.abs(outcome.delta) + ' · เสีย 1 หัวใจ','wrong');
+  } else {
+    setFeedback(outcome.bonusStarted ? 'เข้าโบนัส 8 วินาที · เหรียญทอง +25' : 'เก็บเหรียญ +' + outcome.delta,'coin');
+  }
+}
+
+function tick(time) {
+  if (mode !== 'flight') return;
+  const dt = lastFrame === undefined ? 0 : Math.min((time-lastFrame)/1000,.05);
+  lastFrame = time;
+  const previousY = playerY;
+  const previousDistance = play.distance;
+  movePlayer(dt);
+  advanceArcade(play,dt);
+  const hits = collideArcade(play,{x:ARCADE_PLAYER_X,y:previousY},{x:ARCADE_PLAYER_X,y:playerY},play.distance-previousDistance);
+  for (const hit of hits) handleContact(hit);
+  if (!$('#flight-guide').hidden && play.elapsed >= guideUntil) $('#flight-guide').hidden = true;
+  if (play.elapsed > feedbackUntil && $('#feedback').dataset.kind) setFeedback(flightHint);
+  refreshHud();
+  renderObjects();
+  drawFlight();
+  if (play.complete || play.failed) { finish(); return; }
+  frameRequest = requestAnimationFrame(tick);
+}
+
+function showDialog(content) {
+  $('#panel-content').innerHTML = content;
+  if (!$('#panel').open) $('#panel').showModal();
+}
+
+function resumeFlight() {
+  $('#panel').close();
+  startRunning();
+}
+
+function pauseFlight() {
+  if (mode !== 'flight') return;
+  mode = 'paused';
+  paint.pauseScenery();
+  audio.stopMusic();
+  clearSteering();
+  setArcadePaused(play,true);
+  cancelAnimationFrame(frameRequest);
+  showDialog(`<h2>พักเที่ยวทุ่งนา</h2>
+    <label for="speed">ความเร็ว</label> <select id="speed"><option value="1">ปกติ</option><option value=".75">ช้าลง</option></select>
+    <div class="panel-actions"><button id="go-on" class="gold">บินต่อ</button><button id="go-home" class="light">กลับหน้าแรก</button><button id="restart-level" class="light">เริ่มเกมใหม่</button></div>`);
+  $('#speed').value = String(preferences.speed || 1).replace(/^0\./,'.');
+  $('#speed').onchange = event=>{
+    preferences.speed = Number(event.target.value);
+    selectMotionSpeed(preferences.speed);
+    save();
+  };
+  $('#go-on').onclick = resumeFlight;
+  $('#restart-level').onclick = ()=>startNewRun();
+  $('#go-home').onclick = returnLobby;
+}
+
+function returnLobby() {
+  paint.pauseScenery();
+  audio.stopMusic();
+  clearIntro();
+  clearStageTransition();
+  cancelAnimationFrame(frameRequest);
+  if ($('#panel').open) $('#panel').close();
+  mode = 'lobby';
+  clearSteering();
+  play = null;
+  journey = [];
+  audio.startMusic('menu');
+  $('#game').hidden = true;
+  $('#lobby').hidden = false;
+  document.body.classList.remove('in-game');
+  renderLobby();
+  $('#start').focus({preventScroll:true});
+}
+
+function advanceToStage(next) {
+  mode = 'transition';
+  const curtain = $('#stage-wipe');
+  $('#wipe-index').textContent = 'ด่าน ' + next.id;
+  $('#wipe-name').textContent = next.name;
+  curtain.hidden = false;
+  // Apply the final opacity after the starting style is committed.
+  void curtain.offsetWidth;
+  curtain.classList.add('visible');
+  const midpoint = reduce ? 100 : 245;
+  const tail = reduce ? 120 : 390;
+  transitionTimer = setTimeout(()=>{
+    begin(next,{preserveTransition:true});
+    curtain.classList.add('fade-out');
+    revealTimer = setTimeout(()=>clearStageTransition(),tail);
+  },midpoint);
+}
+
+function finish() {
+  mode = 'finished';
+  cancelAnimationFrame(frameRequest);
+  clearSteering();
+  paint.pauseScenery();
+  audio.stopMusic();
+  setArcadePaused(play,true);
+  drawFlight();
+  const round = play;
+  journey.push({
+    score:round.score, words:round.collected.size, targets:round.targets.size,
+    coins:round.coins, wrong:round.wrong.map(entry=>entry.word), completed:!round.failed,
+  });
+  const next = !round.failed && levels.find(level=>level.id === round.level.id+1);
+  if (next) { advanceToStage(next); return; }
+  audio.startMusic(round.failed ? 'failed-summary' : 'summary');
+  audio.play(round.failed ? 'failed' : 'complete');
+  showJourneyResults(round);
+}
+
+function showJourneyResults(round) {
+  const title = round.failed ? 'หัวใจหมดแล้ว' : 'จบเส้นทางแม่ ก กา';
+  const reached = journey.filter(result=>result.completed).length;
+  const misses = [...new Set(journey.flatMap(result=>result.wrong))].slice(0,8);
+  const takeaway = misses.length
+    ? 'คำที่มีตัวสะกดในรอบนี้ ' + misses.map(escapeText).join(' · ')
+    : 'รอบนี้ไม่ชนคำลวง';
+  showDialog(`<h2>${title}</h2>
+    <p>เล่นจบ ${reached} ด่าน · เก็บคำถูก ${totalBeforeStage('words')}/${totalBeforeStage('targets')}<br>
+      เหรียญ ${totalBeforeStage('coins')} · <strong>คะแนนรวม ${totalBeforeStage('score')}</strong></p>
+    <p class="recap">${takeaway}</p>
+    <div class="panel-actions">
+      <button id="play-again" class="gold">เริ่มเกมใหม่</button>
+      <button id="round-home" class="light">กลับหน้าแรก</button>
+    </div>`);
+  $('#play-again').onclick = ()=>startNewRun();
+  $('#round-home').onclick = returnLobby;
+}
+
+showStageImage($('#hero-art'),levels[0]);
+image('rice-grass-'+levels[0].local);
+$('#hero-player').src = images['girl-painted'];
+const levelMenu = $('#level-menu');
+$('#show-levels').onclick = ()=>{
+  audio.startMusic('select');
+  levelMenu.showModal();
+};
+$('#close-levels').onclick = ()=>levelMenu.close();
+levelMenu.addEventListener('close',()=>{ if(mode === 'lobby') audio.startMusic('menu'); });
+wireChromeLink($('#chrome-open'));
+$('#skip').onclick = ()=>startRunning();
+$('#pause').onclick = pauseFlight;
+const flightField = $('#field');
+flightField.addEventListener('pointerdown',startSteering);
+flightField.addEventListener('pointermove',steer);
+for (const event of ['pointerup','pointercancel','lostpointercapture']) {
+  flightField.addEventListener(event,stopSteering);
+}
+window.addEventListener('keydown',event=>{
+  if (mode !== 'flight' || !['ArrowUp','ArrowDown'].includes(event.key)) return;
+  event.preventDefault();
+  audio.unlock();
+  directionKeys.add(event.key);
+});
+window.addEventListener('keyup',event=>directionKeys.delete(event.key));
+window.addEventListener('blur',clearSteering);
+
+$('#panel').addEventListener('cancel',event=>{
+  event.preventDefault();
+  if (mode === 'paused') resumeFlight();
+  else if (mode === 'finished') returnLobby();
+});
+document.addEventListener('visibilitychange',()=>{if (document.hidden) pauseFlight();});
+window.addEventListener('pagehide',()=>audio.stopMusic());
+for (const button of document.querySelectorAll('[data-audio]')) {
+  button.onclick = ()=>{
+    preferences.muted = !preferences.muted;
+    setAudio();
+    if (!preferences.muted) { audio.unlock(); audio.play('coin'); }
+    save();
+  };
+}
+document.addEventListener('pointerdown',()=>audio.unlock(),{once:true,capture:true});
+document.addEventListener('keydown',()=>audio.unlock(),{once:true,capture:true});
+setAudio();
+audio.startMusic('menu');
+renderLobby();
+
+}</script>
+</body>
+</html>
