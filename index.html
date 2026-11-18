@@ -322,7 +322,7 @@ button:focus-visible, a:focus-visible { outline: 3px solid #69dcca; outline-offs
     <div class="menu-motes" aria-hidden="true"></div>
     <header class="top">
       <a id="chrome-open" class="light" hidden>เปิดใน Chrome</a>
-      <button class="light" data-audio aria-pressed="true">เสียงเปิด</button>
+      <button class="light" data-audio aria-pressed="false">เปิดเสียง</button>
     </header>
     <div class="hero-content">
       <p class="season">แม่ ก กา</p>
@@ -347,7 +347,7 @@ button:focus-visible, a:focus-visible { outline: 3px solid #69dcca; outline-offs
     <header class="hud">
       <div class="place"><strong id="hud-place"></strong><span id="hud-matra">แม่ ก กา</span><span id="hud-remaining"></span></div>
       <div class="hud-stats"><div><small>คำถูก</small><b id="hud-words">0/20</b></div><div><small>คะแนนรวม</small><b id="hud-score">0</b></div><div><small>เหรียญ</small><b id="hud-coins">0</b></div><div class="hearts" id="hud-hearts" data-count="3" aria-label="หัวใจ 3 จาก 3"><small>หัวใจ</small><b aria-hidden="true"><span class="heart" data-filled="true">♥</span><span class="heart" data-filled="true">♥</span><span class="heart" data-filled="true">♥</span></b></div></div>
-      <div class="hud-actions"><button class="light" data-audio aria-pressed="true">เสียงเปิด</button><button id="pause" class="light">พัก</button></div>
+      <div class="hud-actions"><button class="light" data-audio aria-pressed="false">เปิดเสียง</button><button id="pause" class="light">พัก</button></div>
     </header>
     <div id="bonus" hidden>โบนัสเหรียญทอง <b id="bonus-time"></b></div>
     <div id="flight-guide" hidden>
@@ -364,7 +364,7 @@ button:focus-visible, a:focus-visible { outline: 3px solid #69dcca; outline-offs
       <div class="intro-petals" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i></div>
       <p id="intro-caption" role="status"></p>
       <progress id="intro-progress" max="8" value="0" aria-label="ความคืบหน้าฉากแปลงร่าง"></progress>
-      <button id="intro-audio" class="light" data-audio aria-pressed="true">เสียงเปิด</button>
+      <button id="intro-audio" class="light" data-audio aria-pressed="false">เปิดเสียง</button>
       <button id="skip" class="light">ข้ามฉาก →</button>
     </aside>
   </div>
@@ -981,7 +981,7 @@ function summerFlight(canvas, distantScenery, foregroundScenery, width, height, 
 }
 
 // Web Audio music and cues. Audio unlock stays in a player gesture.
-function arcadeAudio() {
+function arcadeAudio(onStatus = ()=>{}) {
   const introNames = new Set(['house', 'glimmer', 'magic', 'bloom', 'takeoff', 'breeze']);
   const voices = new Set();
   const pending = [];
@@ -1042,7 +1042,8 @@ function arcadeAudio() {
   let musicOutput;
   let noiseBuffer;
   let muted = false;
-  let resuming;
+  let status = 'idle';
+  let resumeTimer;
   let musicTrack;
   let musicTimer;
   let musicStep = 0;
@@ -1133,6 +1134,10 @@ function arcadeAudio() {
     const note = (hz,offset,duration,gain,wave,endHz) => tone(name,start,hz,offset,duration,gain,wave,endHz);
     const air = (offset,duration,gain,from,to,type) => breeze(name,start,offset,duration,gain,from,to,type);
     switch (name) {
+      case 'ready':
+        note(784,0,.17,.22);
+        note(1047,.08,.24,.17);
+        break;
       case 'house':
         // A soft wooden latch and two little outside chimes.
         air(0,.11,.20,370,190);
@@ -1283,41 +1288,83 @@ function arcadeAudio() {
 
   function flush() {
     if (context?.state !== 'running') return;
+    clearTimeout(resumeTimer);
+    report('running');
     const now = performance.now();
     const recent = pending.splice(0).filter(event=>now - event.time < 650);
     for (const event of recent) cue(event.name);
     syncMusic();
   }
 
-  function unlock() {
+  function report(next) {
+    const value = muted ? 'muted' : next;
+    if (value === status) return;
+    status = value;
+    onStatus(status);
+  }
+
+  function setPlaybackMode(type) {
+    const session = globalThis.navigator?.audioSession;
+    try {
+      if (session && session.type !== type) session.type = type;
+    } catch { /* The browser's default audio mode still works. */ }
+  }
+
+  function unlock(retry = false) {
     if (muted || globalThis.document?.hidden) return;
     const Context = globalThis.AudioContext || globalThis.webkitAudioContext;
-    if (!Context) return;
+    if (!Context) { report('blocked'); return; }
     try {
+      setPlaybackMode('playback');
+      if (retry && context && context.state !== 'running') {
+        stopAll();
+        context.close().catch(()=>{});
+        context = undefined;
+        output = undefined;
+        musicOutput = undefined;
+        noiseBuffer = undefined;
+      }
       if (!context) {
         context = new Context();
         const master = context.createGain();
         const limiter = context.createDynamicsCompressor();
-        master.gain.value = .48;
+        master.gain.value = .68;
         limiter.threshold.value = -12;
         limiter.ratio.value = 8;
         const music = context.createGain();
-        music.gain.value = .64;
+        music.gain.value = .68;
         music.connect(master);
         master.connect(limiter);
         limiter.connect(context.destination);
         output = master;
         musicOutput = music;
-        context.addEventListener?.('statechange',flush);
+        const created = context;
+        context.addEventListener?.('statechange',()=>{
+          if (context !== created) return;
+          if (context.state === 'running') flush();
+          else {
+            stopMusicPlayback();
+            if (status !== 'starting') report('idle');
+          }
+        });
       }
       if (context.state === 'running') {
         flush();
-      } else if (!resuming) {
-        resuming = Promise.resolve(context.resume()).then(flush,()=>{}).finally(()=>{resuming = undefined;});
+        return;
       }
+      const attempt = context;
+      report('starting');
+      clearTimeout(resumeTimer);
+      resumeTimer = setTimeout(()=>{
+        if (context === attempt && context.state !== 'running') report('blocked');
+      },1200);
+      attempt.resume().then(
+        ()=>{ if (context === attempt) flush(); },
+        ()=>{ if (context === attempt && context.state !== 'running') report('blocked'); },
+      );
     } catch {
-      // Sound stays optional on devices without an available audio context.
       if (!output) context = undefined;
+      report('blocked');
     }
   }
 
@@ -1350,15 +1397,23 @@ function arcadeAudio() {
 
   function setMuted(value) {
     muted = Boolean(value);
-    if (muted) stopAll();
-    else syncMusic();
+    if (muted) {
+      clearTimeout(resumeTimer);
+      stopAll();
+      setPlaybackMode('auto');
+      report('muted');
+    } else if (context?.state === 'running') {
+      flush();
+    } else {
+      report('idle');
+    }
   }
 
   globalThis.document?.addEventListener('visibilitychange',()=>{
     if (globalThis.document.hidden) stopAll();
     else syncMusic();
   });
-  return {unlock,play,setMuted,cancelIntro,startMusic,stopMusic};
+  return {unlock,play,setMuted,cancelIntro,startMusic,stopMusic,get status(){return status;}};
 }
 
 function chromeHref(href, device) {
@@ -1396,7 +1451,7 @@ function wireChromeLink(element, href = location.href, device = navigator) {
 const $ = (selector) => document.querySelector(selector);
 const storeKey = 'krasue-flight-settings-v2';
 const { levels, seasons, images } = globalThis.arcadePack;
-const audio = arcadeAudio();
+const audio = arcadeAudio(showAudioStatus);
 const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
 const distantScenery = $('#scenery-far');
 const foregroundScenery = $('#scenery-grass');
@@ -1487,11 +1542,15 @@ function selectMotionSpeed(label) {
   play.speed = Number(label) === .75 ? 132 : ARCADE_SPEED;
 }
 
-function setAudio() {
-  audio.setMuted(!!preferences.muted);
+function showAudioStatus(state) {
+  const labels = {
+    idle:'เปิดเสียง', muted:'เปิดเสียง', starting:'เปิดเสียง…',
+    blocked:'ลองเปิดเสียง', running:'ปิดเสียง',
+  };
   for (const button of document.querySelectorAll('[data-audio]')) {
-    button.setAttribute('aria-pressed', String(!preferences.muted));
-    button.textContent = preferences.muted ? 'เสียงปิด' : 'เสียงเปิด';
+    button.dataset.audioState = state;
+    button.setAttribute('aria-pressed', String(state === 'running'));
+    button.textContent = labels[state];
   }
 }
 
@@ -1542,7 +1601,7 @@ function clearSteering() {
 
 function startSteering(event) {
   if (mode !== 'flight' || gesture || event.button !== 0 || event.target.closest('button, .hud')) return;
-  audio.unlock();
+  if (event.pointerType === 'mouse') audio.unlock();
   gesture = {id:event.pointerId, start:event.clientY, height:desiredY};
   try { $('#field').setPointerCapture(event.pointerId); } catch {}
 }
@@ -1554,7 +1613,9 @@ function steer(event) {
 }
 
 function stopSteering(event) {
-  if (gesture?.id === event.pointerId) gesture = null;
+  if (gesture?.id !== event.pointerId) return;
+  gesture = null;
+  if (event.type === 'pointerup' && audio.status !== 'running') audio.unlock();
 }
 
 function movePlayer(dt) {
@@ -1565,7 +1626,6 @@ function movePlayer(dt) {
 
 function startRunning() {
   clearIntro();
-  audio.unlock();
   $('#flight-guide').hidden = play.elapsed >= guideUntil;
   mode = 'flight';
   $('#field').focus({preventScroll:true});
@@ -1630,6 +1690,9 @@ function clearStageTransition(hide = true) {
 
 function startNewRun(level = levels[0]) {
   journey = [];
+  const wasPlaying = audio.status === 'running';
+  audio.unlock();
+  if (!wasPlaying) audio.play('ready');
   begin(level,{showStory:true});
 }
 
@@ -1639,7 +1702,6 @@ function begin(level, {showStory = false, preserveTransition = false} = {}) {
   clearStageTransition(!preserveTransition);
   if (frameRequest != null) cancelAnimationFrame(frameRequest);
   if ($('#panel').open) $('#panel').close();
-  audio.unlock();
   play = createArcade(level,null);
   selectMotionSpeed(preferences.speed);
   feedbackUntil = 0;
@@ -1786,6 +1848,7 @@ function showDialog(content) {
 
 function resumeFlight() {
   $('#panel').close();
+  audio.unlock();
   startRunning();
 }
 
@@ -1893,13 +1956,17 @@ prepareIntroFrame(0);
 $('#hero-player').src = images['girl-painted'];
 const levelMenu = $('#level-menu');
 $('#show-levels').onclick = ()=>{
+  audio.unlock();
   audio.startMusic('select');
   levelMenu.showModal();
 };
 $('#close-levels').onclick = ()=>levelMenu.close();
 levelMenu.addEventListener('close',()=>{ if(mode === 'lobby') audio.startMusic('menu'); });
 wireChromeLink($('#chrome-open'));
-$('#skip').onclick = ()=>startRunning();
+$('#skip').onclick = ()=>{
+  audio.unlock();
+  startRunning();
+};
 $('#pause').onclick = pauseFlight;
 const flightField = $('#field');
 flightField.addEventListener('pointerdown',startSteering);
@@ -1925,15 +1992,17 @@ document.addEventListener('visibilitychange',()=>{if (document.hidden) pauseFlig
 window.addEventListener('pagehide',()=>audio.stopMusic());
 for (const button of document.querySelectorAll('[data-audio]')) {
   button.onclick = ()=>{
-    preferences.muted = !preferences.muted;
-    setAudio();
-    if (!preferences.muted) { audio.unlock(); audio.play('coin'); }
+    preferences.muted = audio.status === 'running';
+    audio.setMuted(preferences.muted);
+    if (!preferences.muted) {
+      audio.unlock(true);
+      audio.play('ready');
+    }
     save();
   };
 }
-document.addEventListener('pointerdown',()=>audio.unlock(),{once:true,capture:true});
-document.addEventListener('keydown',()=>audio.unlock(),{once:true,capture:true});
-setAudio();
+audio.setMuted(preferences.muted);
+showAudioStatus(audio.status);
 audio.startMusic('menu');
 renderLobby();
 
